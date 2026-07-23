@@ -1,0 +1,60 @@
+{
+  "name": "@prerenderbuddy/mcp",
+  "version": "0.1.0",
+  "description": "Local MCP tools for crawler-readability and discovery-file diagnostics.",
+  "homepage": "https://github.com/kopachlager/prerenderbuddy-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kopachlager/prerenderbuddy-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kopachlager/prerenderbuddy-mcp/issues"
+  },
+  "type": "module",
+  "bin": {
+    "prerenderbuddy-mcp": "bin/prerenderbuddy-mcp.js"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "check": "node --check bin/prerenderbuddy-mcp.js && node --check src/*.js",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage",
+    "pack:check": "node scripts/verify-package.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "crawler",
+    "technical-seo",
+    "javascript-seo",
+    "googlebot",
+    "gptbot",
+    "robots-txt",
+    "sitemap",
+    "llms-txt"
+  ],
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "@prerenderbuddy/cli": "0.1.3",
+    "zod": "^4.1.13"
+  },
+  "overrides": {
+    "@hono/node-server": "2.0.11"
+  }
+}
