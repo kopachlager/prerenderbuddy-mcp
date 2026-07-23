@@ -118,11 +118,11 @@ See [SECURITY.md](SECURITY.md) for the complete boundary.
 
 ## Results and errors
 
-Successful calls return the complete CLI diagnostic in `structuredContent`.
-Text content contains a concise summary to avoid duplicating a potentially large
-result. The server never returns full raw HTML. Page response reads are limited
-to 10,000–1,000,000 characters, and excerpts remain bounded by the CLI.
-Discovery-file reads use the CLI's bounded response handling.
+Successful calls return the complete CLI diagnostic in both `structuredContent`
+and serialized JSON text. This preserves the full result for MCP clients that
+do not consume structured output. The server never returns full raw HTML. Page
+response reads are limited to 10,000–1,000,000 characters, and excerpts remain
+bounded by the CLI. Discovery-file reads use the CLI's bounded response handling.
 
 Execution failures return `isError: true`, a short text message, and structured
 error data with a stable diagnostic code aligned with the CLI categories:
