@@ -17,6 +17,12 @@ function captureTools(diagnostics) {
   return registered;
 }
 
+function assertCompleteTextFallback(result) {
+  assert.equal(result.content.length, 1);
+  assert.equal(result.content[0].type, 'text');
+  assert.deepEqual(JSON.parse(result.content[0].text), result.structuredContent);
+}
+
 test('registers exactly three diagnostic-only tools', () => {
   const tools = captureTools({});
   assert.deepEqual([...tools.keys()], TOOL_NAMES);
@@ -55,10 +61,8 @@ test('crawler readability forwards bounded options and returns structured output
   });
   assert.equal(result.structuredContent.summary, 'pass');
   assert.match(result.structuredContent.mcpSafetyNote, /untrusted data/);
-  const textContent = JSON.parse(result.content[0].text);
-  assert.equal(textContent.command, 'check');
-  assert.match(textContent.message, /structuredContent/);
-  assert.equal(textContent.html, undefined);
+  assertCompleteTextFallback(result);
+  assert.equal(JSON.parse(result.content[0].text).html.title, 'Example');
 });
 
 test('HTTP comparison preserves precise non-rendering terminology', async () => {
@@ -83,17 +87,41 @@ test('HTTP comparison preserves precise non-rendering terminology', async () => 
   assert.equal(received.options.textRatioThreshold, 0.2);
   assert.match(tool.definition.description, /Neither response executes JavaScript/);
   assert.equal(result.structuredContent.comparisonMode, 'http-user-agent-responses');
+  assertCompleteTextFallback(result);
+  assert.equal(
+    JSON.parse(result.content[0].text).comparisonMode,
+    'http-user-agent-responses',
+  );
 });
 
-test('discovery checks use MCP-compatible structured results', async () => {
+test('discovery findings remain complete in structured and text results', async () => {
+  const finding = {
+    severity: 'warning',
+    code: 'invalid_sitemap_urls',
+    message: 'One sitemap entry is invalid.',
+  };
   const tools = captureTools({
     async checkDiscoveryFiles() {
-      return { command: 'files', summary: 'warning', files: [] };
+      return {
+        command: 'files',
+        summary: 'warning',
+        files: [{
+          name: 'sitemap.xml',
+          issues: [finding],
+        }],
+        issues: [finding],
+      };
     },
   });
 
-  const files = await tools.get('check_discovery_files').handler({ url: 'https://example.com' });
-  assert.equal(files.structuredContent.command, 'files');
+  const result = await tools.get('check_discovery_files').handler({
+    url: 'https://example.com',
+  });
+  assert.equal(result.structuredContent.command, 'files');
+  assertCompleteTextFallback(result);
+  const textResult = JSON.parse(result.content[0].text);
+  assert.deepEqual(textResult.issues, [finding]);
+  assert.deepEqual(textResult.files[0].issues, [finding]);
 });
 
 test('execution errors include stable structured codes and safe messages', async () => {

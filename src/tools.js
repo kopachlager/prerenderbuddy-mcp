@@ -40,23 +40,12 @@ function withSafetyNote(result) {
   };
 }
 
-function conciseTextResult(output) {
-  return {
-    command: output.command,
-    summary: output.summary,
-    url: output.url,
-    issueCount: Array.isArray(output.issues) ? output.issues.length : undefined,
-    message: 'Complete diagnostics are available in structuredContent.',
-    mcpSafetyNote: output.mcpSafetyNote,
-  };
-}
-
 function asToolResult(result) {
   const output = withSafetyNote(result);
   return {
     content: [{
       type: 'text',
-      text: JSON.stringify(conciseTextResult(output), null, 2),
+      text: JSON.stringify(output, null, 2),
     }],
     structuredContent: output,
   };
