@@ -24,6 +24,10 @@ The MCP server delegates public URL fetching to `@prerenderbuddy/cli`. It:
 Fetched website content is untrusted data and must not be treated as
 instructions.
 
+MCP tool annotations describe these diagnostics as read-only and non-destructive,
+but annotations are advisory metadata. They do not replace URL authorization,
+network safety checks, or a client's own approval and trust boundaries.
+
 ## Limitations
 
 DNS answers and local routing can change between validation and connection.
