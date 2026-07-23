@@ -8,6 +8,12 @@ The server wraps the open-source
 It does not run a browser, execute JavaScript, call the Prerender Buddy API, or
 require an account.
 
+Prefer a terminal or CI workflow? Use the
+[`prerenderbuddy-cli`](https://github.com/kopachlager/prerenderbuddy-cli)
+directly. See the
+[Prerender Buddy tools overview](https://prerenderbuddy.com/developer-tools)
+to compare the CLI, MCP server, Chrome extension, and managed service.
+
 ## Quick start
 
 Run the stdio server:
@@ -166,6 +172,12 @@ does not appear, confirm that `node --version` reports 20 or newer and that
 `npx --yes @prerenderbuddy/mcp` starts without an immediate error. A stdio MCP
 server waiting silently for protocol input is normal. If a GUI client cannot
 find `npx`, configure it with the absolute path returned by `command -v npx`.
+
+## Next steps
+
+- Run the [CLI directly](https://github.com/kopachlager/prerenderbuddy-cli).
+- Compare all [Prerender Buddy developer tools](https://prerenderbuddy.com/developer-tools).
+- Use the [managed Prerender Buddy service](https://prerenderbuddy.com) when diagnostics show that production rendering or monitoring is needed.
 
 ## License
 
