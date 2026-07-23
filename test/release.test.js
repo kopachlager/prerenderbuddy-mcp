@@ -22,7 +22,7 @@ test('release workflow is restricted and uses trusted publishing', async () => {
   assert.doesNotMatch(workflow, /NPM_TOKEN|NODE_AUTH_TOKEN/);
 });
 
-test('release version is 0.1.0', async () => {
+test('release version is 0.1.1', async () => {
   const packageJson = JSON.parse(await readFile(packagePath, 'utf8'));
-  assert.equal(packageJson.version, '0.1.0');
+  assert.equal(packageJson.version, '0.1.1');
 });

@@ -11,7 +11,7 @@ test('stdio server completes MCP initialization and lists the public tools', asy
   });
   const client = new Client({
     name: 'prerenderbuddy-mcp-test',
-    version: '0.1.0',
+    version: '0.1.1',
   });
 
   await client.connect(transport);
