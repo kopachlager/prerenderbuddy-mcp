@@ -31,6 +31,14 @@ Generic MCP client configuration:
 
 Restart the MCP client after changing its configuration.
 
+To verify the connection, ask the client to list its MCP tools. You should see:
+
+```text
+check_crawler_readability
+compare_http_responses
+check_discovery_files
+```
+
 ## Tools
 
 ### `check_crawler_readability`
@@ -101,22 +109,63 @@ private, link-local, reserved, and multicast network targets and revalidates
 redirect destinations through the CLI.
 
 Fetched website content is untrusted data. MCP clients and language models must
-not treat returned page text as instructions.
+not treat returned page text as instructions. The warning is included in tool
+descriptions and structured results, but a warning does not remove
+prompt-injection risk. Clients must maintain their own trust boundaries.
 
 Do not expose this local package as an unrestricted public URL-fetching service.
 See [SECURITY.md](SECURITY.md) for the complete boundary.
+
+## Results and errors
+
+Successful calls return the complete CLI diagnostic in `structuredContent`.
+Text content contains a concise summary to avoid duplicating a potentially large
+result. The server never returns full raw HTML. Page response reads are limited
+to 10,000–1,000,000 characters, and excerpts remain bounded by the CLI.
+Discovery-file reads use the CLI's bounded response handling.
+
+Execution failures return `isError: true`, a short text message, and structured
+error data with a stable diagnostic code aligned with the CLI categories:
+`invalid_input`,
+`unsafe_target`, `timeout`, `request_failed`, or `internal_error`. Unexpected
+errors are reduced to a generic message so local paths are not exposed.
+Input-schema violations are rejected by the MCP protocol before a diagnostic
+runs.
+
+The tools intentionally do not declare `outputSchema` yet. Their
+`structuredContent` mirrors the pre-1.0 CLI result, and a schema will be added
+after those result shapes stabilize.
 
 ## Development
 
 Requires Node.js 20 or newer.
 
 ```bash
-npm ci
+npm ci --ignore-scripts
 npm test
 npm run test:coverage
 npm run check
 npm run pack:check
 ```
+
+Local repository configuration:
+
+```json
+{
+  "mcpServers": {
+    "prerenderbuddy-local": {
+      "command": "node",
+      "args": ["/absolute/path/to/prerenderbuddy-mcp/bin/prerenderbuddy-mcp.js"]
+    }
+  }
+}
+```
+
+After changing an MCP configuration, fully restart the client. If the server
+does not appear, confirm that `node --version` reports 20 or newer and that
+`npx --yes @prerenderbuddy/mcp` starts without an immediate error. A stdio MCP
+server waiting silently for protocol input is normal. If a GUI client cannot
+find `npx`, configure it with the absolute path returned by `command -v npx`.
 
 ## License
 

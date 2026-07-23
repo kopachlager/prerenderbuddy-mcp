@@ -30,6 +30,8 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Run tests
         run: npm test
+      - name: Run coverage
+        run: npm run test:coverage
       - name: Check source syntax
         run: npm run check
       - name: Verify package contents
