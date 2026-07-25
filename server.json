@@ -7,8 +7,7 @@
   "homepage": "https://prerenderbuddy.com/developer-tools",
   "repository": {
     "url": "https://github.com/kopachlager/prerenderbuddy-mcp",
-    "source": "github",
-    "subfolder": "."
+    "source": "github"
   },
   "packages": [
     {
