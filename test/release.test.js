@@ -7,6 +7,9 @@ const ciWorkflowPath = new URL('../.github/workflows/ci.yml', import.meta.url);
 const workflowPath = new URL('../.github/workflows/publish.yml', import.meta.url);
 const packagePath = new URL('../package.json', import.meta.url);
 const lockPath = new URL('../package-lock.json', import.meta.url);
+const serverJsonPath = new URL('../server.json', import.meta.url);
+const glamaJsonPath = new URL('../glama.json', import.meta.url);
+const dockerfilePath = new URL('../Dockerfile', import.meta.url);
 
 test('release workflow is restricted and uses trusted publishing', async () => {
   const workflow = await readFile(workflowPath, 'utf8');
@@ -55,4 +58,17 @@ test('package entry points exist and the CLI dependency is explicit', async () =
   const binaryStat = await stat(binaryPath);
   assert.ok(binaryStat.mode & 0o111, 'package binary must be executable');
   assert.equal(packageJson.dependencies['@prerenderbuddy/cli'], '0.1.3');
+});
+
+test('directory metadata identifies the MCP server and maintainer', async () => {
+  const packageJson = JSON.parse(await readFile(packagePath, 'utf8'));
+  const serverJson = JSON.parse(await readFile(serverJsonPath, 'utf8'));
+  const glamaJson = JSON.parse(await readFile(glamaJsonPath, 'utf8'));
+  const dockerfile = await readFile(dockerfilePath, 'utf8');
+
+  assert.equal(packageJson.mcpName, 'io.github.kopachlager/prerenderbuddy-mcp');
+  assert.equal(serverJson.name, packageJson.mcpName);
+  assert.equal(serverJson.packages[0].identifier, packageJson.name);
+  assert.deepEqual(glamaJson.maintainers, ['kopachlager']);
+  assert.match(dockerfile, /ENTRYPOINT \["node", "bin\/prerenderbuddy-mcp\.js"\]/);
 });
