@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { access, readFile, stat } from 'node:fs/promises';
 import test from 'node:test';
+import { contentDelta } from '@prerenderbuddy/cli';
 import { SERVER_VERSION } from '../src/server.js';
 
 const ciWorkflowPath = new URL('../.github/workflows/ci.yml', import.meta.url);
@@ -57,7 +58,19 @@ test('package entry points exist and the CLI dependency is explicit', async () =
   await access(exportPath);
   const binaryStat = await stat(binaryPath);
   assert.ok(binaryStat.mode & 0o111, 'package binary must be executable');
-  assert.equal(packageJson.dependencies['@prerenderbuddy/cli'], '0.1.3');
+  assert.equal(packageJson.dependencies['@prerenderbuddy/cli'], '0.1.4');
+});
+
+test('CLI dependency treats matching empty text volumes as equal', () => {
+  const emptyAnalysis = {
+    textLength: 0,
+    title: 'Example',
+    description: 'Example description',
+    headings: { h1: [] },
+  };
+  const difference = contentDelta(emptyAnalysis, emptyAnalysis);
+
+  assert.equal(difference.textRatio, 1);
 });
 
 test('directory metadata identifies the MCP server and maintainer', async () => {
