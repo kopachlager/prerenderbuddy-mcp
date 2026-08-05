@@ -1,5 +1,7 @@
 # Prerender Buddy MCP
 
+[![M8ven Score](https://m8ven.ai/badge/mcp/kopachlager-prerenderbuddy-mcp-1gu74q)](https://m8ven.ai/mcp/kopachlager-prerenderbuddy-mcp-1gu74q)
+
 Local MCP tools for checking what public crawlers can read from returned HTTP
 responses.
 
