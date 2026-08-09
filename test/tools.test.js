@@ -40,6 +40,15 @@ test('all tools declare read-only, idempotent, open-world annotations', () => {
   }
 });
 
+test('all tools declare URL input validation with Zod', () => {
+  const tools = captureTools({});
+  for (const { definition } of tools.values()) {
+    assert.equal(typeof definition.inputSchema.url.safeParse, 'function');
+    assert.equal(definition.inputSchema.url.safeParse('https://example.com').success, true);
+    assert.equal(definition.inputSchema.url.safeParse('').success, false);
+  }
+});
+
 test('crawler readability forwards bounded options and returns structured output', async () => {
   let received;
   const tools = captureTools({
@@ -148,6 +157,30 @@ test('execution errors include stable structured codes and safe messages', async
     assert.match(failure.structuredContent.mcpSafetyNote, /untrusted data/);
     assert.equal(failure.content[0].text, `${code}: ${message}`);
     assert.doesNotMatch(failure.content[0].text, /\n\s+at |file:\/\//);
+  }
+});
+
+test('every tool handler catches execution errors', async () => {
+  const failure = new Error('The upstream request failed.');
+  const tools = captureTools({
+    async checkUrl() {
+      throw failure;
+    },
+    async compareUrl() {
+      throw failure;
+    },
+    async checkDiscoveryFiles() {
+      throw failure;
+    },
+  });
+
+  for (const name of TOOL_NAMES) {
+    const result = await tools.get(name).handler({ url: 'https://example.com' });
+    assert.equal(result.isError, true);
+    assert.deepEqual(result.structuredContent.error, {
+      code: 'request_failed',
+      message: 'The upstream request failed.',
+    });
   }
 });
 
