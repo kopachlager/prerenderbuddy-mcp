@@ -2,6 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createRequire } from 'node:module';
 import { registerDiagnosticTools } from './tools.js';
+import { registerWorkspaceTools } from './workspace-tools.js';
 
 const require = createRequire(import.meta.url);
 const packageJson = require('../package.json');
@@ -13,7 +14,9 @@ export function createServer(options = {}) {
     name: 'prerenderbuddy-mcp',
     version: SERVER_VERSION,
   });
-  return registerDiagnosticTools(server, options.diagnostics);
+  registerDiagnosticTools(server, options.diagnostics);
+  registerWorkspaceTools(server, options.workspace);
+  return server;
 }
 
 export async function startServer(options = {}) {

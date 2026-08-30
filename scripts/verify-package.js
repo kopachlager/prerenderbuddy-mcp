@@ -27,6 +27,8 @@ try {
     'src/index.js',
     'src/server.js',
     'src/tools.js',
+    'src/workspace-client.js',
+    'src/workspace-tools.js',
     'package.json',
     'README.md',
     'SECURITY.md',

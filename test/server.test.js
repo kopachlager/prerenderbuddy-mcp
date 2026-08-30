@@ -5,10 +5,11 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer, SERVER_VERSION } from '../src/server.js';
 import { TOOL_NAMES } from '../src/tools.js';
+import { WORKSPACE_TOOL_NAMES } from '../src/workspace-tools.js';
 
-async function createTestClient(diagnostics) {
+async function createTestClient(diagnostics, workspace = { enabled: false }) {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  const server = createServer({ diagnostics });
+  const server = createServer({ diagnostics, workspace });
   const client = new Client({
     name: 'prerenderbuddy-mcp-protocol-test',
     version: '1.0.0',
@@ -86,6 +87,48 @@ test('protocol calls all three tools with deterministic diagnostics', async () =
       assert.equal(result.structuredContent.command, command);
       assert.match(result.structuredContent.mcpSafetyNote, /untrusted data/);
     }
+  } finally {
+    await close();
+  }
+});
+
+test('authenticated mode adds bounded read-only workspace tools', async () => {
+  const calls = [];
+  const workspace = {
+    client: {
+      enabled: true,
+      async get(path, query) {
+        calls.push({ path, query });
+        return { path, query };
+      },
+    },
+  };
+  const { client, close } = await createTestClient({}, workspace);
+  try {
+    const listed = await client.listTools();
+    assert.deepEqual(
+      listed.tools.map((tool) => tool.name),
+      [...TOOL_NAMES, ...WORKSPACE_TOOL_NAMES],
+    );
+    for (const tool of listed.tools.filter((item) => WORKSPACE_TOOL_NAMES.includes(item.name))) {
+      assert.deepEqual(tool.annotations, {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      });
+    }
+    const siteId = 'fae03b4c-48cd-44f9-a229-60c820630e5c';
+    const result = await client.callTool({
+      name: 'get_ai_visibility',
+      arguments: { siteId, days: 90 },
+    });
+    assert.equal(result.isError, undefined);
+    assert.deepEqual(calls, [{
+      path: `/v1/developer/sites/${siteId}/visibility`,
+      query: { days: 90 },
+    }]);
+    assert.match(result.structuredContent.mcpSafetyNote, /workspace evidence/i);
   } finally {
     await close();
   }
