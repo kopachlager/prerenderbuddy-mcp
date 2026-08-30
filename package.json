@@ -1,8 +1,8 @@
 {
   "name": "@prerenderbuddy/mcp",
   "mcpName": "io.github.kopachlager/prerenderbuddy-mcp",
-  "version": "0.1.6",
-  "description": "Local MCP tools for crawler-readability and discovery-file diagnostics.",
+  "version": "0.2.0",
+  "description": "Local MCP tools for public crawler diagnostics and optional Prerender Buddy workspace evidence.",
   "homepage": "https://github.com/kopachlager/prerenderbuddy-mcp#readme",
   "repository": {
     "type": "git",

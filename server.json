@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.kopachlager/prerenderbuddy-mcp",
   "title": "Prerender Buddy",
-  "description": "Local MCP tools for crawler-readability and discovery-file diagnostics.",
-  "version": "0.1.6",
+  "description": "Local MCP tools for public crawler diagnostics and optional Prerender Buddy workspace evidence.",
+  "version": "0.2.0",
   "homepage": "https://prerenderbuddy.com/developer-tools",
   "repository": {
     "url": "https://github.com/kopachlager/prerenderbuddy-mcp",
@@ -14,7 +14,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@prerenderbuddy/mcp",
-      "version": "0.1.6",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       }
