@@ -1,8 +1,8 @@
 {
   "name": "@prerenderbuddy/mcp",
   "mcpName": "io.github.kopachlager/prerenderbuddy-mcp",
-  "version": "0.2.0",
-  "description": "Local MCP tools for public crawler diagnostics and optional Prerender Buddy workspace evidence.",
+  "version": "0.2.1",
+  "description": "MCP tools for public crawler diagnostics, optional workspace evidence, and Streamable HTTP connectors.",
   "homepage": "https://github.com/kopachlager/prerenderbuddy-mcp#readme",
   "repository": {
     "type": "git",
@@ -44,7 +44,9 @@
     "gptbot",
     "robots-txt",
     "sitemap",
-    "llms-txt"
+    "llms-txt",
+    "grok",
+    "streamable-http"
   ],
   "license": "Apache-2.0",
   "publishConfig": {

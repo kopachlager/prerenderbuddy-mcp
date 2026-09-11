@@ -44,9 +44,24 @@ network safety checks, or a client's own approval and trust boundaries.
 ## Limitations
 
 DNS answers and local routing can change between validation and connection.
-Do not expose this package as an unrestricted hosted URL-fetching service.
-Hosted use requires independent egress controls, authentication, rate limits,
-and abuse prevention.
+
+Unresolved environment placeholders such as `${PRERENDER_BUDDY_API_KEY}` are
+treated as absent, so workspace tools are not registered.
+
+HTTP / Streamable HTTP mode (`--http` or `MCP_TRANSPORT=http`) is intended for
+connectors such as Grok Bot. It:
+
+- serves `/health` and `/mcp`;
+- rate-limits MCP requests;
+- requires a Bearer token when bound to a non-loopback address, unless
+  `MCP_HTTP_REQUIRE_AUTH` is explicitly disabled;
+- uses a request `pb_live_` / `pb_test_` key for workspace tools when present;
+- accepts `MCP_HTTP_SHARED_TOKEN` as a connector token that does not enable
+  workspace tools.
+
+Hosted HTTP still needs independent egress controls, abuse monitoring, and
+HTTPS at the reverse proxy. Do not expose anonymous public fetching.
+
 
 User-agent checks do not verify crawler source IPs and cannot prove how a server
 responds to every genuine crawler request.

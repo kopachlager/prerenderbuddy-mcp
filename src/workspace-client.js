@@ -1,3 +1,5 @@
+import { normalizeConfiguredApiKey } from './api-key.js';
+
 const DEFAULT_API_BASE_URL = 'https://api.prerenderbuddy.com';
 const DEFAULT_TIMEOUT_MS = 20000;
 const DEFAULT_MAX_BYTES = 2_000_000;
@@ -33,7 +35,7 @@ export class WorkspaceApiError extends Error {
 }
 
 export function createWorkspaceApiClient(options = {}) {
-  const apiKey = String(options.apiKey ?? process.env.PRERENDER_BUDDY_API_KEY ?? '').trim();
+  const apiKey = normalizeConfiguredApiKey(options.apiKey ?? process.env.PRERENDER_BUDDY_API_KEY);
   const baseUrl = apiBaseUrl(options.baseUrl ?? process.env.PRERENDER_BUDDY_API_BASE_URL);
   const timeoutMs = boundedInteger(
     options.timeoutMs ?? process.env.PRERENDER_BUDDY_API_TIMEOUT_MS,
