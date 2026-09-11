@@ -61,6 +61,56 @@ get_recommendations
 get_content_status
 ```
 
+## Grok Build
+
+Grok Build can launch the local stdio server:
+
+```bash
+grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.1
+```
+
+Or install the official plugin, which already includes Claude-compatible manifests:
+
+```bash
+grok plugin marketplace add kopachlager/prerenderbuddy-plugins
+grok plugin install prerenderbuddy --trust
+```
+
+Set `PRERENDER_BUDDY_API_KEY` in the process environment when workspace evidence is required. Unresolved placeholders such as `${PRERENDER_BUDDY_API_KEY}` are treated as absent.
+
+## Streamable HTTP / Grok Bot
+
+Grok Bot on grok.com, iOS, and Android cannot start a local `npx` process. It needs a public HTTPS MCP URL.
+
+Run Streamable HTTP locally:
+
+```bash
+npx --yes @prerenderbuddy/mcp@0.2.1 --http --port 8787
+```
+
+Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and still rate-limits requests. Binding a public interface (`--host 0.0.0.0` or a non-loopback `HOST`) requires a Bearer token:
+
+- a Prerender Buddy API key (`pb_live_...` or `pb_test_...`), which also enables workspace tools; or
+- `MCP_HTTP_SHARED_TOKEN`, a connector token for public diagnostics only.
+
+```bash
+MCP_TRANSPORT=http HOST=0.0.0.0 PORT=8787 MCP_HTTP_REQUIRE_AUTH=true \
+  npx --yes @prerenderbuddy/mcp@0.2.1
+```
+
+Health check: `GET /health`. MCP endpoint: `POST /mcp`.
+
+For Grok Bot, expose that URL over HTTPS, then:
+
+1. Open [grok.com/connectors](https://grok.com/connectors).
+2. New Connector → Custom.
+3. Enter `https://your-host/mcp`.
+4. Complete authentication with the Bearer token.
+
+Temporary tunnels work for demos; Grok rejects `localhost`. Prefer Streamable HTTP JSON responses, which this server enables by default. Cloudflare quick tunnels do not support SSE.
+
+Do not publish an open, unauthenticated URL-fetching endpoint. Hosted use needs HTTPS, rate limits, and a token.
+
 ## Optional workspace mode
 
 Create a Pro API key in Prerender Buddy and grant only the evidence groups the

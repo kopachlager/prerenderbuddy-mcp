@@ -48,3 +48,11 @@ test('workspace client returns bounded structured API errors without leaking key
       && !error.message.includes('pb_live_'),
   );
 });
+
+test('workspace client treats unresolved placeholders as disabled', () => {
+  const client = createWorkspaceApiClient({
+    apiKey: '${PRERENDER_BUDDY_API_KEY}',
+    fetchFn: async () => new Response('{}'),
+  });
+  assert.equal(client.enabled, false);
+});
