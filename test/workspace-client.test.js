@@ -56,3 +56,29 @@ test('workspace client treats unresolved placeholders as disabled', () => {
   });
   assert.equal(client.enabled, false);
 });
+
+test('workspace client limits streamed bytes without trusting content length', async () => {
+  let cancelled = false;
+  const client = createWorkspaceApiClient({ apiKey: 'test', maxBytes: 10000,
+    fetchFn: async () => new Response(new ReadableStream({
+      pull(controller) { controller.enqueue(new Uint8Array(6000)); },
+      cancel() { cancelled = true; },
+    }), { headers: { 'content-length': '1' } }) });
+  await assert.rejects(client.get('/v1/developer/sites'), error => error.code === 'workspace_response_too_large');
+  assert.equal(cancelled, true);
+});
+test('workspace timeout covers a body that stalls after headers', async () => {
+  let cancelled = false;
+  const client = createWorkspaceApiClient({ apiKey: 'test', timeoutMs: 1000,
+    fetchFn: async () => new Response(new ReadableStream({ cancel() { cancelled = true; } })) });
+  await assert.rejects(client.get('/v1/developer/sites'), error => error.code === 'workspace_timeout');
+  assert.equal(cancelled, true);
+});
+test('workspace requests reject remote HTTP and foreign origins; redirects are disabled', async () => {
+  assert.throws(() => createWorkspaceApiClient({ baseUrl: 'http://remote.example' }), /HTTPS/);
+  const client = createWorkspaceApiClient({ apiKey: 'test', fetchFn: async (url, options) => {
+    assert.equal(options.redirect, 'error'); return new Response('{}');
+  } });
+  await assert.rejects(client.get('https://other.example/'), /configured origin/);
+  await client.get('/v1/developer/sites');
+});

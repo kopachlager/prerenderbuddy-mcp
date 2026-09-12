@@ -1,23 +1,30 @@
-export function createRateLimiter({ windowMs = 60_000, max = 30 } = {}) {
-  const hits = new Map();
+import { createHash } from 'node:crypto';
 
+// Fixed windows with bounded storage; new identities fail closed at capacity.
+export function createRateLimiter({ windowMs = 60_000, max = 30, maxKeys = 10_000, now = Date.now } = {}) {
+  const hits = new Map();
   return {
     allow(key) {
-      const now = Date.now();
-      const recent = (hits.get(key) || []).filter((stamp) => now - stamp < windowMs);
-      if (recent.length >= max) {
-        hits.set(key, recent);
-        return false;
+      const time = now();
+      for (const [id, entry] of hits) if (entry.expires <= time) hits.delete(id);
+      let entry = hits.get(key);
+      if (!entry) {
+        if (hits.size >= maxKeys) return false;
+        entry = { count: 0, expires: time + windowMs };
+        hits.set(key, entry);
       }
-      recent.push(now);
-      hits.set(key, recent);
+      if (entry.count >= max) return false;
+      entry.count += 1;
       return true;
     },
   };
 }
 
-export function clientKey(req, token = '') {
-  const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-  const ip = forwarded || req.socket?.remoteAddress || 'unknown';
-  return token ? `${ip}:${token.slice(0, 12)}` : ip;
+// Never trust arbitrary forwarded headers. Proxy traffic intentionally shares
+// the conservative ingress budget; authenticated callers also get their own cap.
+export function clientKey(req) {
+  return req.socket?.remoteAddress || 'unknown';
+}
+export function credentialKey(token) {
+  return createHash('sha256').update(token).digest('hex');
 }

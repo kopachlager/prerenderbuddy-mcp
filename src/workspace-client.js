@@ -12,6 +12,7 @@ function boundedInteger(value, fallback, minimum, maximum) {
 function apiBaseUrl(value) {
   const parsed = new URL(value || DEFAULT_API_BASE_URL);
   if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Prerender Buddy API base URL must use HTTP or HTTPS.');
+  if (parsed.protocol !== 'https:' && !['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname)) throw new Error('Remote Prerender Buddy API requires HTTPS.');
   parsed.pathname = parsed.pathname.replace(/\/$/, '');
   parsed.search = '';
   parsed.hash = '';
@@ -20,7 +21,7 @@ function apiBaseUrl(value) {
 
 function safeErrorMessage(value, fallback) {
   const message = String(value || '').trim();
-  if (!message || /pb_live_|authorization|bearer/i.test(message)) return fallback;
+  if (!message || /pb_(?:live|test)_|authorization|bearer/i.test(message)) return fallback;
   return message.slice(0, 500);
 }
 
@@ -56,39 +57,56 @@ export function createWorkspaceApiClient(options = {}) {
       for (const [key, value] of Object.entries(query)) {
         if (value !== undefined && value !== null && value !== '') target.searchParams.set(key, String(value));
       }
+      if (target.origin !== baseUrl.origin) throw new Error('API request must use the configured origin.');
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      let reader;
+      let timer;
+      const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => {
+          controller.abort();
+          reader?.cancel().catch(() => {});
+          reject(new WorkspaceApiError('Prerender Buddy API request timed out.', { code: 'workspace_timeout' }));
+        }, timeoutMs);
+      });
       let response;
+      let body;
       try {
-        response = await fetchFn(target, {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            Accept: 'application/json',
-            'User-Agent': 'PrerenderBuddyMCP/0.2',
-          },
-          signal: controller.signal,
-        });
+        ({ response, body } = await Promise.race([timeout, (async () => {
+          const response = await fetchFn(target, {
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              Accept: 'application/json',
+              'User-Agent': 'PrerenderBuddyMCP/0.2',
+            },
+            redirect: 'error',
+            signal: controller.signal,
+          });
+          const tooLarge = () => new WorkspaceApiError('Prerender Buddy API response exceeded the local MCP size limit.', {
+            status: response.status, code: 'workspace_response_too_large',
+          });
+          if ((Number(response.headers.get('content-length')) || 0) > maxBytes) {
+            response.body?.cancel().catch(() => {});
+            throw tooLarge();
+          }
+          reader = response.body?.getReader();
+          const chunks = [];
+          let size = 0;
+          if (reader) {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              size += value.byteLength;
+              if (size > maxBytes) { reader.cancel().catch(() => {}); throw tooLarge(); }
+              chunks.push(value);
+            }
+          }
+          return { response, body: Buffer.concat(chunks, size) };
+        })()]));
       } catch (error) {
-        const timedOut = error?.name === 'AbortError';
-        throw new WorkspaceApiError(timedOut ? 'Prerender Buddy API request timed out.' : 'Prerender Buddy API request failed.', {
-          code: timedOut ? 'workspace_timeout' : 'workspace_request_failed',
-        });
+        if (error instanceof WorkspaceApiError) throw error;
+        throw new WorkspaceApiError('Prerender Buddy API request failed.', { code: 'workspace_request_failed' });
       } finally {
         clearTimeout(timer);
-      }
-      const declaredBytes = Number(response.headers.get('content-length')) || 0;
-      if (declaredBytes > maxBytes) {
-        throw new WorkspaceApiError('Prerender Buddy API response exceeded the local MCP size limit.', {
-          status: response.status,
-          code: 'workspace_response_too_large',
-        });
-      }
-      const body = await response.arrayBuffer();
-      if (body.byteLength > maxBytes) {
-        throw new WorkspaceApiError('Prerender Buddy API response exceeded the local MCP size limit.', {
-          status: response.status,
-          code: 'workspace_response_too_large',
-        });
       }
       let data = {};
       try {
