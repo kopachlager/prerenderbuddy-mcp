@@ -66,7 +66,7 @@ get_content_status
 Grok Build can launch the local stdio server:
 
 ```bash
-grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.1
+grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.2
 ```
 
 Or install the official plugin, which already includes Claude-compatible manifests:
@@ -85,27 +85,41 @@ Grok Bot on grok.com, iOS, and Android cannot start a local `npx` process. It ne
 Run Streamable HTTP locally:
 
 ```bash
-npx --yes @prerenderbuddy/mcp@0.2.1 --http --port 8787
+npx --yes @prerenderbuddy/mcp@0.2.2 --http --port 8787
 ```
 
 Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and still rate-limits requests. Binding a public interface (`--host 0.0.0.0` or a non-loopback `HOST`) requires a Bearer token:
 
-- a Prerender Buddy API key (`pb_live_...` or `pb_test_...`), which also enables workspace tools; or
+- a valid, unrevoked Pro workspace API key (`pb_live_...` or `pb_test_...`), verified with the PB API before each authenticated request, which also enables workspace tools; or
 - `MCP_HTTP_SHARED_TOKEN`, a connector token for public diagnostics only.
 
 ```bash
 MCP_TRANSPORT=http HOST=0.0.0.0 PORT=8787 MCP_HTTP_REQUIRE_AUTH=true \
-  npx --yes @prerenderbuddy/mcp@0.2.1
+  npx --yes @prerenderbuddy/mcp@0.2.2
 ```
 
 Health check: `GET /health`. MCP endpoint: `POST /mcp`.
+
+Deploy the Dockerfile as a dedicated service with `MCP_TRANSPORT=http`,
+`HOST=0.0.0.0`, and `MCP_HTTP_REQUIRE_AUTH=true`; retain the hosting platform's
+`PORT`. `railway.json` configures the health check. Never set
+`PRERENDER_BUDDY_API_KEY` on a shared HTTP service: HTTP tools use only the
+request's workspace key, and never inherit the process key.
+
+The default ingress cap is 120 MCP requests per minute per process, including
+failed authentication. `MCP_HTTP_INGRESS_RATE_LIMIT_MAX` controls this cap.
+Authenticated credentials additionally default to 30 requests per minute
+(`MCP_HTTP_RATE_LIMIT_MAX`). Forwarded IP headers are not trusted. Rate-limit
+storage is bounded; these limits are process-local, so use a shared gateway
+limit before scaling to multiple replicas. API verification failures reject
+access; revoked keys are not cached.
 
 For Grok Bot, expose that URL over HTTPS, then:
 
 1. Open [grok.com/connectors](https://grok.com/connectors).
 2. New Connector → Custom.
 3. Enter `https://your-host/mcp`.
-4. Complete authentication with the Bearer token.
+4. Configure Bearer authentication if the connector setup supports it. This server does not implement OAuth; confirm your client supports token-authenticated custom MCP servers.
 
 Temporary tunnels work for demos; Grok rejects `localhost`. Prefer Streamable HTTP JSON responses, which this server enables by default. Cloudflare quick tunnels do not support SSE.
 
@@ -193,7 +207,7 @@ List my Prerender Buddy sites, then summarize health and AI visibility for the s
 
 ## Product boundary
 
-Without an API key, this package provides one-time local diagnostics for public URLs. It:
+In local stdio mode without an API key, this package provides one-time local diagnostics for public URLs. It:
 
 - uses the same public URL-safety, redirect, timeout, and response-size controls
   as the CLI;

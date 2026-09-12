@@ -52,12 +52,17 @@ HTTP / Streamable HTTP mode (`--http` or `MCP_TRANSPORT=http`) is intended for
 connectors such as Grok Bot. It:
 
 - serves `/health` and `/mcp`;
-- rate-limits MCP requests;
+- bounds pre-authentication ingress independently of supplied tokens and forwarded headers, then limits authenticated credentials using full-token hashes;
 - requires a Bearer token when bound to a non-loopback address, unless
   `MCP_HTTP_REQUIRE_AUTH` is explicitly disabled;
-- uses a request `pb_live_` / `pb_test_` key for workspace tools when present;
+- verifies request workspace keys with the PB API before admitting authenticated requests, including revoked-key and plan checks;
+- uses only the request workspace key for HTTP tools, never a process-wide workspace key;
 - accepts `MCP_HTTP_SHARED_TOKEN` as a connector token that does not enable
   workspace tools.
+
+Workspace API reads require HTTPS outside loopback development, reject redirects and foreign origins, and enforce timeouts and byte limits through body streaming.
+
+Rate limits use bounded process-local storage. Add a shared gateway limit before scaling replicas.
 
 Hosted HTTP still needs independent egress controls, abuse monitoring, and
 HTTPS at the reverse proxy. Do not expose anonymous public fetching.

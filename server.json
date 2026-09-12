@@ -3,7 +3,7 @@
   "name": "io.github.kopachlager/prerenderbuddy-mcp",
   "title": "Prerender Buddy",
   "description": "MCP tools for public crawler diagnostics, optional workspace evidence, and Streamable HTTP connectors.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://prerenderbuddy.com/developer-tools",
   "repository": {
     "url": "https://github.com/kopachlager/prerenderbuddy-mcp",
@@ -14,7 +14,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@prerenderbuddy/mcp",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "transport": {
         "type": "stdio"
       }

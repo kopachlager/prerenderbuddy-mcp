@@ -31,18 +31,18 @@ test('prefers a request workspace key over an environment placeholder', () => {
   assert.equal(key, 'pb_live_fromrequest');
 });
 
-test('HTTP auth requires a workspace key or shared token when enabled', () => {
-  assert.equal(isAuthorizedHttpRequest({}, { requireAuth: false }), true);
-  assert.equal(isAuthorizedHttpRequest({}, { requireAuth: true }), false);
-  assert.equal(isAuthorizedHttpRequest(
+test('HTTP auth requires a validated workspace key or shared token when enabled', async () => {
+  assert.equal(await isAuthorizedHttpRequest({}, { requireAuth: false }), true);
+  assert.equal(await isAuthorizedHttpRequest({}, { requireAuth: true }), false);
+  assert.equal(await isAuthorizedHttpRequest(
     { authorization: 'Bearer pb_live_validkey1' },
-    { requireAuth: true },
+    { requireAuth: true, validateWorkspaceKey: async () => true },
   ), true);
-  assert.equal(isAuthorizedHttpRequest(
+  assert.equal(await isAuthorizedHttpRequest(
     { authorization: 'Bearer connector-shared-token' },
     { requireAuth: true, sharedToken: 'connector-shared-token' },
   ), true);
-  assert.equal(isAuthorizedHttpRequest(
+  assert.equal(await isAuthorizedHttpRequest(
     { authorization: 'Bearer wrong' },
     { requireAuth: true, sharedToken: 'connector-shared-token' },
   ), false);
@@ -57,4 +57,11 @@ test('HTTP mode defaults to loopback without required auth', () => {
 
   const publicBind = parseRuntimeOptions(['--http', '--host', '0.0.0.0'], {});
   assert.equal(publicBind.requireAuth, true);
+});
+
+test('invented keys do not pass auth, including when a shared token is configured', async () => {
+  const headers = { authorization: 'Bearer pb_live_NOTAREALKEY12345' };
+  assert.equal(await isAuthorizedHttpRequest(headers, { requireAuth: true }), false);
+  assert.equal(await isAuthorizedHttpRequest(headers, { requireAuth: true, sharedToken: 'secret', validateWorkspaceKey: async () => false }), false);
+  assert.equal(await isAuthorizedHttpRequest(headers, { requireAuth: true, validateWorkspaceKey: async () => { throw new Error('offline'); } }), false);
 });

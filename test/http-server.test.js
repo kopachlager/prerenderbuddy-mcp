@@ -110,3 +110,40 @@ test('HTTP MCP rate-limits repeated requests', async () => {
     server.close();
   }
 });
+
+test('public HTTP rejects forged keys and token rotation cannot evade ingress limits', async () => {
+  let validations = 0;
+  const { server, origin } = await listen({ requireAuth: true, ingressRateLimitMax: 2,
+    validateWorkspaceKey: async () => { validations++; return false; } });
+  try {
+    for (let i = 0; i < 3; i++) {
+      const response = await fetch(`${origin}/mcp`, { method: 'POST', headers: {
+        Authorization: `Bearer pb_live_fakekey${i}`, 'x-forwarded-for': `192.0.2.${i}`,
+      } });
+      assert.equal(response.status, i < 2 ? 401 : 429);
+    }
+    assert.equal(validations, 2);
+  } finally { server.close(); }
+});
+
+test('shared-token diagnostics never inherit a service workspace key', async () => {
+  const { server, origin } = await listen({ requireAuth: true, sharedToken: 'test-connector',
+    env: { PRERENDER_BUDDY_API_KEY: 'pb_live_otherworkspace' } });
+  try {
+    await withClient(`${origin}/mcp`, { Authorization: 'Bearer test-connector' }, async client => {
+      assert.deepEqual((await client.listTools()).tools.map(x => x.name), TOOL_NAMES);
+      const result = await client.callTool({ name: 'check_crawler_readability', arguments: { url: 'https://example.com' } });
+      assert.notEqual(result.isError, true);
+    });
+  } finally { server.close(); }
+});
+
+test('validated request keys retain workspace tools', async () => {
+  const { server, origin } = await listen({ requireAuth: true,
+    validateWorkspaceKey: async key => key === 'pb_live_validkey1' });
+  try {
+    await withClient(`${origin}/mcp`, { Authorization: 'Bearer pb_live_validkey1' }, async client => {
+      assert.deepEqual((await client.listTools()).tools.map(x => x.name), [...TOOL_NAMES, ...WORKSPACE_TOOL_NAMES]);
+    });
+  } finally { server.close(); }
+});

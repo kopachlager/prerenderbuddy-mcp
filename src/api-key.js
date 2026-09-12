@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 const PLACEHOLDER_PATTERN = /^\$\{[A-Z][A-Z0-9_]*\}$/;
 const WORKSPACE_KEY_PATTERN = /^pb_(?:live|test)_[A-Za-z0-9_-]{8,}$/;
 
@@ -26,11 +27,16 @@ export function requestWorkspaceApiKey(headers = {}, env = process.env) {
   return '';
 }
 
-export function isAuthorizedHttpRequest(headers = {}, options = {}) {
+export async function isAuthorizedHttpRequest(headers = {}, options = {}) {
   if (!options.requireAuth) return true;
   const token = normalizeConfiguredApiKey(bearerToken(headers))
     || normalizeConfiguredApiKey(headers['x-prerender-buddy-api-key']);
   if (!token) return false;
-  if (options.sharedToken && token === options.sharedToken) return true;
-  return looksLikeWorkspaceApiKey(token);
+  if (options.sharedToken) {
+    const expected = Buffer.from(options.sharedToken);
+    const supplied = Buffer.from(token);
+    if (expected.length === supplied.length && timingSafeEqual(expected, supplied)) return true;
+  }
+  if (!looksLikeWorkspaceApiKey(token) || !options.validateWorkspaceKey) return false;
+  try { return await options.validateWorkspaceKey(token) === true; } catch { return false; }
 }
