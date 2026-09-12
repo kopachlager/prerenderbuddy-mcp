@@ -147,3 +147,21 @@ test('validated request keys retain workspace tools', async () => {
     });
   } finally { server.close(); }
 });
+
+
+test('stateless HTTP declines optional SSE and session deletion without holding connections', async () => {
+  const { server, origin } = await listen({ requireAuth: true, sharedToken: 'test-connector' });
+  try {
+    for (const method of ['GET', 'DELETE']) {
+      const response = await fetch(`${origin}/mcp`, { method, headers: {
+        Authorization: 'Bearer test-connector', Accept: 'text/event-stream',
+      } });
+      assert.equal(response.status, 405);
+      assert.equal(response.headers.get('allow'), 'POST, OPTIONS');
+      assert.equal((await response.json()).error.code, 'method_not_allowed');
+    }
+    await withClient(`${origin}/mcp`, { Authorization: 'Bearer test-connector' }, async client => {
+      assert.deepEqual((await client.listTools()).tools.map(x => x.name), TOOL_NAMES);
+    });
+  } finally { server.close(); }
+});
