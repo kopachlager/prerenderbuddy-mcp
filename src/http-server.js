@@ -115,6 +115,14 @@ export function createHttpListener(options = {}) {
       return;
     }
 
+    // A stateless JSON endpoint has no session event stream. Let clients skip
+    // optional SSE rather than hold a connection that cannot deliver events.
+    if (req.method !== 'POST') {
+      res.setHeader('allow', 'POST, OPTIONS');
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use POST for this stateless MCP endpoint.' } });
+      return;
+    }
+
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
       enableJsonResponse: true,
