@@ -2,7 +2,8 @@
 
 [![M8ven Score](https://m8ven.ai/badge/mcp/kopachlager-prerenderbuddy-mcp-1gu74q)](https://m8ven.ai/mcp/kopachlager-prerenderbuddy-mcp-1gu74q)
 
-Local MCP tools for checking what public crawlers can read, with optional
+The MCP companion to the Prerender Buddy AI visibility and crawler-readiness
+platform. It checks what public crawlers can read and can optionally retrieve
 read-only evidence from a Prerender Buddy workspace.
 
 The server wraps the open-source

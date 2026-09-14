@@ -2,7 +2,7 @@
   "name": "@prerenderbuddy/mcp",
   "mcpName": "io.github.kopachlager/prerenderbuddy-mcp",
   "version": "0.2.3",
-  "description": "MCP tools for public crawler diagnostics, optional workspace evidence, and Streamable HTTP connectors.",
+  "description": "MCP companion to the Prerender Buddy platform for crawler diagnostics and optional workspace evidence.",
   "homepage": "https://github.com/kopachlager/prerenderbuddy-mcp#readme",
   "repository": {
     "type": "git",
