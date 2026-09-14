@@ -67,7 +67,7 @@ get_content_status
 Grok Build can launch the local stdio server:
 
 ```bash
-grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.3
+grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.4
 ```
 
 Or install the official plugin, which already includes Claude-compatible manifests:
@@ -86,7 +86,7 @@ Grok Bot on grok.com, iOS, and Android cannot start a local `npx` process. It ne
 Run Streamable HTTP locally:
 
 ```bash
-npx --yes @prerenderbuddy/mcp@0.2.3 --http --port 8787
+npx --yes @prerenderbuddy/mcp@0.2.4 --http --port 8787
 ```
 
 Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and still rate-limits requests. Binding a public interface (`--host 0.0.0.0` or a non-loopback `HOST`) requires a Bearer token:
@@ -96,7 +96,7 @@ Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and s
 
 ```bash
 MCP_TRANSPORT=http HOST=0.0.0.0 PORT=8787 MCP_HTTP_REQUIRE_AUTH=true \
-  npx --yes @prerenderbuddy/mcp@0.2.3
+  npx --yes @prerenderbuddy/mcp@0.2.4
 ```
 
 Health check: `GET /health`. MCP endpoint: `POST /mcp`. Authenticated `GET` and `DELETE` on `/mcp` return 405; this stateless JSON endpoint does not offer an SSE session stream.
