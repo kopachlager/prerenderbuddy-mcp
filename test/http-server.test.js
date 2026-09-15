@@ -90,10 +90,36 @@ test('HTTP MCP rejects missing auth when required', async () => {
   try {
     const response = await fetch(`${origin}/mcp`, { method: 'POST' });
     assert.equal(response.status, 401);
+    assert.equal(response.headers.get('www-authenticate'), 'Bearer resource_metadata="https://mcp.prerenderbuddy.com/.well-known/oauth-protected-resource"');
     assert.equal((await response.json()).error.code, 'unauthorized');
   } finally {
     server.close();
   }
+});
+
+test('HTTP MCP publishes OAuth protected-resource metadata', async () => {
+  const { server, origin } = await listen({ requireAuth: true });
+  try {
+    const response = await fetch(`${origin}/.well-known/oauth-protected-resource`);
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      resource: 'https://mcp.prerenderbuddy.com/mcp',
+      authorization_servers: ['https://api.prerenderbuddy.com'],
+      bearer_methods_supported: ['header'],
+      scopes_supported: ['sites', 'health', 'activity', 'visibility', 'content'],
+    });
+  } finally { server.close(); }
+});
+
+test('OAuth access tokens are validated and retain workspace tools', async () => {
+  const token = `pb_oauth_${'a'.repeat(43)}`;
+  const { server, origin } = await listen({ requireAuth: true,
+    validateWorkspaceKey: async key => key === token });
+  try {
+    await withClient(`${origin}/mcp`, { Authorization: `Bearer ${token}` }, async client => {
+      assert.deepEqual((await client.listTools()).tools.map(x => x.name), [...TOOL_NAMES, ...WORKSPACE_TOOL_NAMES]);
+    });
+  } finally { server.close(); }
 });
 
 test('HTTP MCP rate-limits repeated requests', async () => {
