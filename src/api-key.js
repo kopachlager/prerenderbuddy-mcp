@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 const PLACEHOLDER_PATTERN = /^\$\{[A-Z][A-Z0-9_]*\}$/;
-const WORKSPACE_KEY_PATTERN = /^pb_(?:live|test)_[A-Za-z0-9_-]{8,}$/;
+const WORKSPACE_KEY_PATTERN = /^pb_(?:(?:live|test)_[A-Za-z0-9_-]{8,}|oauth_[A-Za-z0-9_-]{32,})$/;
 
 export function normalizeConfiguredApiKey(value) {
   const key = String(value ?? '').trim();

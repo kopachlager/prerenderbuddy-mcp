@@ -15,6 +15,10 @@ const JSON_HEADERS = {
   'cache-control': 'no-store',
 };
 
+const DEFAULT_MCP_BASE_URL = 'https://mcp.prerenderbuddy.com';
+const DEFAULT_OAUTH_ISSUER = 'https://api.prerenderbuddy.com';
+const OAUTH_SCOPES = ['sites', 'health', 'activity', 'visibility', 'content'];
+
 function sendJson(res, status, body) {
   res.writeHead(status, JSON_HEADERS);
   res.end(JSON.stringify(body));
@@ -47,6 +51,9 @@ export function createHttpListener(options = {}) {
   const path = options.path || '/mcp';
   const requireAuth = Boolean(options.requireAuth);
   const sharedToken = normalizeConfiguredApiKey(options.sharedToken);
+  const mcpBaseUrl = String(options.mcpBaseUrl || process.env.MCP_PUBLIC_BASE_URL || DEFAULT_MCP_BASE_URL).replace(/\/$/, '');
+  const oauthIssuer = String(options.oauthIssuer || process.env.MCP_OAUTH_ISSUER || DEFAULT_OAUTH_ISSUER).replace(/\/$/, '');
+  const protectedResourceUrl = `${mcpBaseUrl}/.well-known/oauth-protected-resource`;
   const limiter = options.limiter || createRateLimiter({
     windowMs: options.rateLimitWindowMs,
     max: options.rateLimitMax,
@@ -83,6 +90,16 @@ export function createHttpListener(options = {}) {
       return;
     }
 
+    if (pathname === '/.well-known/oauth-protected-resource' || pathname === '/.well-known/oauth-protected-resource/mcp') {
+      sendJson(res, 200, {
+        resource: `${mcpBaseUrl}${path}`,
+        authorization_servers: [oauthIssuer],
+        bearer_methods_supported: ['header'],
+        scopes_supported: OAUTH_SCOPES,
+      });
+      return;
+    }
+
     if (pathname !== path) {
       sendJson(res, 404, {
         error: { code: 'not_found', message: 'Use /health or the configured MCP path.' },
@@ -100,11 +117,11 @@ export function createHttpListener(options = {}) {
     }
 
     if (!await isAuthorizedHttpRequest(req.headers, { requireAuth, sharedToken, validateWorkspaceKey })) {
-      res.setHeader('www-authenticate', 'Bearer');
+      res.setHeader('www-authenticate', `Bearer resource_metadata="${protectedResourceUrl}"`);
       sendJson(res, 401, {
         error: {
           code: 'unauthorized',
-          message: 'Provide a Bearer token: a Prerender Buddy API key, or the configured shared connector token.',
+          message: 'Authorize with Prerender Buddy OAuth or provide a supported Bearer token.',
         },
       });
       return;

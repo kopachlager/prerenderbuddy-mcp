@@ -67,7 +67,7 @@ get_content_status
 Grok Build can launch the local stdio server:
 
 ```bash
-grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.4
+grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.5
 ```
 
 Or install the official plugin, which already includes Claude-compatible manifests:
@@ -86,7 +86,7 @@ Grok Bot on grok.com, iOS, and Android cannot start a local `npx` process. It ne
 Run Streamable HTTP locally:
 
 ```bash
-npx --yes @prerenderbuddy/mcp@0.2.4 --http --port 8787
+npx --yes @prerenderbuddy/mcp@0.2.5 --http --port 8787
 ```
 
 Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and still rate-limits requests. Binding a public interface (`--host 0.0.0.0` or a non-loopback `HOST`) requires a Bearer token:
@@ -96,7 +96,7 @@ Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and s
 
 ```bash
 MCP_TRANSPORT=http HOST=0.0.0.0 PORT=8787 MCP_HTTP_REQUIRE_AUTH=true \
-  npx --yes @prerenderbuddy/mcp@0.2.4
+  npx --yes @prerenderbuddy/mcp@0.2.5
 ```
 
 Health check: `GET /health`. MCP endpoint: `POST /mcp`. Authenticated `GET` and `DELETE` on `/mcp` return 405; this stateless JSON endpoint does not offer an SSE session stream.
@@ -120,7 +120,7 @@ For Grok Bot, expose that URL over HTTPS, then:
 1. Open [grok.com/connectors](https://grok.com/connectors).
 2. New Connector → Custom.
 3. Enter `https://your-host/mcp`.
-4. Configure Bearer authentication if the connector setup supports it. This server does not implement OAuth; confirm your client supports token-authenticated custom MCP servers.
+4. Hosted Prerender Buddy uses OAuth Authorization Code with mandatory S256 PKCE. Self-hosted deployments may alternatively configure a Bearer token.
 
 Temporary tunnels work for demos; Grok rejects `localhost`. Prefer Streamable HTTP JSON responses, which this server enables by default. Cloudflare quick tunnels do not support SSE.
 
