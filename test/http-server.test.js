@@ -56,6 +56,18 @@ test('HTTP health endpoint reports the package version', async () => {
   }
 });
 
+test('HTTP publishes the OpenAI Apps domain-verification challenge', async () => {
+  const { server, origin } = await listen();
+  try {
+    const response = await fetch(`${origin}/.well-known/openai-apps-challenge`);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type'), /^text\/plain/);
+    assert.equal(await response.text(), 'eng3f8LytQ0x0BeEp7Ke1JA2we3ipZhDoWRHgC7DK_I');
+  } finally {
+    server.close();
+  }
+});
+
 test('HTTP MCP lists public tools without a key', async () => {
   const { server, origin } = await listen();
   try {

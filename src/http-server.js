@@ -17,6 +17,7 @@ const JSON_HEADERS = {
 
 const DEFAULT_MCP_BASE_URL = 'https://mcp.prerenderbuddy.com';
 const DEFAULT_OAUTH_ISSUER = 'https://api.prerenderbuddy.com';
+const OPENAI_APPS_CHALLENGE_TOKEN = 'eng3f8LytQ0x0BeEp7Ke1JA2we3ipZhDoWRHgC7DK_I';
 const OAUTH_SCOPES = ['sites', 'health', 'activity', 'visibility', 'content'];
 
 function sendJson(res, status, body) {
@@ -87,6 +88,15 @@ export function createHttpListener(options = {}) {
         version: SERVER_VERSION,
         transport: 'http',
       });
+      return;
+    }
+
+    if (pathname === '/.well-known/openai-apps-challenge') {
+      res.writeHead(200, {
+        'content-type': 'text/plain; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      });
+      res.end(OPENAI_APPS_CHALLENGE_TOKEN);
       return;
     }
 
