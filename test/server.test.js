@@ -115,7 +115,7 @@ test('authenticated mode adds bounded read-only workspace tools', async () => {
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
-        openWorldHint: true,
+        openWorldHint: false,
       });
     }
     const siteId = 'fae03b4c-48cd-44f9-a229-60c820630e5c';

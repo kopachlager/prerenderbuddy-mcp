@@ -1,0 +1,200 @@
+{
+  "$schema": "https://developers.openai.com/apps-sdk/schemas/chatgpt-app-submission.v1.json",
+  "schema_version": 1,
+  "app_info": {
+    "display_name": "Prerender Buddy",
+    "subtitle": "Review website evidence",
+    "description": "Prerender Buddy helps users inspect public crawler-readable HTML and review read-only website health, crawler activity, AI visibility, recommendations, and content status from an authorized workspace.",
+    "category": "DEVELOPER_TOOLS"
+  },
+  "tools": {
+    "check_crawler_readability": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Fetches and analyzes a public page without creating, updating, or deleting data.",
+        "open_world_justification": "Retrieves a user-supplied public URL from an open-ended set of websites.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "compare_http_responses": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Fetches and compares public HTTP responses without modifying the target website or workspace.",
+        "open_world_justification": "Retrieves a user-supplied public URL using two request profiles from an open-ended set of websites.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "check_discovery_files": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Fetches and inspects public discovery files without changing them or the target website.",
+        "open_world_justification": "Retrieves conventional discovery files for a user-supplied public website.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "list_sites": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Retrieves website identifiers and metadata without changing workspace data.",
+        "open_world_justification": "Only accesses websites already present in the authenticated Prerender Buddy workspace.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "get_site_overview": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Retrieves an existing website summary without changing workspace data.",
+        "open_world_justification": "Only accesses a selected website inside the authenticated Prerender Buddy workspace.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "get_health_evidence": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Retrieves recorded website health and technical evidence without running changes or updating records.",
+        "open_world_justification": "Only accesses health evidence for a selected website in the authenticated workspace.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "get_crawler_activity": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Retrieves previously recorded crawler and search activity without changing workspace data.",
+        "open_world_justification": "Only accesses activity for a selected website in the authenticated workspace.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "get_ai_visibility": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Retrieves recorded AI visibility evidence without starting collections or changing tracked questions.",
+        "open_world_justification": "Only accesses AI visibility data for a selected website in the authenticated workspace.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "get_recommendations": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Retrieves existing evidence-grounded recommendations without applying changes.",
+        "open_world_justification": "Only accesses recommendations for a selected website in the authenticated workspace.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "get_content_status": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Retrieves content calendar and draft-status metadata without editing or publishing content.",
+        "open_world_justification": "Only accesses content status for a selected website in the authenticated workspace.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    }
+  },
+  "test_cases": [
+    {
+      "description": "Inspect the crawler-readable HTML returned by an authorized public page.",
+      "user_prompt": "Check whether Googlebot receives meaningful HTML from https://example.com.",
+      "file_attachment_urls": null,
+      "tools_triggered": "check_crawler_readability",
+      "expected_output": "Reports the final URL, HTTP status, metadata, headings, readable-text evidence, and restrained findings without claiming browser rendering.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Compare ordinary and crawler-profile HTTP responses for a public page.",
+      "user_prompt": "Compare the standard and GPTBot HTTP responses for https://example.com/pricing.",
+      "file_attachment_urls": null,
+      "tools_triggered": "compare_http_responses",
+      "expected_output": "Summarizes meaningful status, header, metadata, link, and text differences while clearly stating the limits of HTTP-only comparison.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Inspect the standard discovery files published by a public website.",
+      "user_prompt": "Check robots.txt, sitemap.xml, and llms.txt for https://example.com.",
+      "file_attachment_urls": null,
+      "tools_triggered": "check_discovery_files",
+      "expected_output": "Reports which discovery files are available, their relevant directives or entries, and any cautious findings without claiming guaranteed indexing.",
+      "expected_output_url": null
+    },
+    {
+      "description": "List authorized workspace websites so the user can select one.",
+      "user_prompt": "List the websites in my Prerender Buddy workspace so I can choose one to review.",
+      "file_attachment_urls": null,
+      "tools_triggered": "list_sites",
+      "expected_output": "Returns the websites available to the signed-in workspace with identifiers and concise status information.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Review recorded AI visibility evidence for an authorized workspace website.",
+      "user_prompt": "For the selected Prerender Buddy website, show its AI visibility evidence from the last 90 days.",
+      "file_attachment_urls": null,
+      "tools_triggered": "get_ai_visibility",
+      "expected_output": "Returns bounded AI visibility summaries, including recorded mentions, recommendations, citations, competitors, and provider coverage when available.",
+      "expected_output_url": null
+    }
+  ],
+  "negative_test_cases": [
+    {
+      "description": "Do not trigger for a request to modify and deploy a website.",
+      "user_prompt": "Rewrite my homepage and deploy it now.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because it provides read-only evidence and cannot edit or deploy websites.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not trigger for an unrelated calendar request.",
+      "user_prompt": "What meetings do I have tomorrow?",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because calendar access is outside its supported workflows.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not trigger for unrelated travel shopping.",
+      "user_prompt": "Find the cheapest flights from London to Tokyo next month.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because flight search and purchasing are outside its supported workflows.",
+      "expected_output_url": null
+    }
+  ]
+}

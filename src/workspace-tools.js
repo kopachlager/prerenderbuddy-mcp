@@ -16,7 +16,7 @@ const ANNOTATIONS = Object.freeze({
   readOnlyHint: true,
   destructiveHint: false,
   idempotentHint: true,
-  openWorldHint: true,
+  openWorldHint: false,
 });
 
 function result(data) {
