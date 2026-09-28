@@ -4,7 +4,7 @@
 
 The MCP companion to the Prerender Buddy AI visibility and crawler-readiness
 platform. It checks what public crawlers can read and can optionally retrieve
-read-only evidence from a Prerender Buddy workspace.
+evidence from a Prerender Buddy workspace, with optional confirmed article generation.
 
 The server wraps the open-source
 [`@prerenderbuddy/cli`](https://github.com/kopachlager/prerenderbuddy-cli).
@@ -67,7 +67,7 @@ get_content_status
 Grok Build can launch the local stdio server:
 
 ```bash
-grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.2.5
+grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.3.0
 ```
 
 Or install the official plugin, which already includes Claude-compatible manifests:
@@ -86,7 +86,7 @@ Grok Bot on grok.com, iOS, and Android cannot start a local `npx` process. It ne
 Run Streamable HTTP locally:
 
 ```bash
-npx --yes @prerenderbuddy/mcp@0.2.5 --http --port 8787
+npx --yes @prerenderbuddy/mcp@0.3.0 --http --port 8787
 ```
 
 Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and still rate-limits requests. Binding a public interface (`--host 0.0.0.0` or a non-loopback `HOST`) requires a Bearer token:
@@ -96,7 +96,7 @@ Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and s
 
 ```bash
 MCP_TRANSPORT=http HOST=0.0.0.0 PORT=8787 MCP_HTTP_REQUIRE_AUTH=true \
-  npx --yes @prerenderbuddy/mcp@0.2.5
+  npx --yes @prerenderbuddy/mcp@0.3.0
 ```
 
 Health check: `GET /health`. MCP endpoint: `POST /mcp`. Authenticated `GET` and `DELETE` on `/mcp` return 405; this stateless JSON endpoint does not offer an SSE session stream.
@@ -149,10 +149,10 @@ repository file.
 The default API origin is `https://api.prerenderbuddy.com`. Self-hosted or
 staging development can override it with `PRERENDER_BUDDY_API_BASE_URL`.
 
-Workspace tools are registered only when the key is present. They are
-read-only, workspace-scoped by the API, limited to registered sites within the
-plan allowance, and return bounded summaries rather than full provider answers
-or article bodies.
+Workspace tools require authentication and are scoped by the API to registered
+sites within the plan allowance. Existing evidence tools remain read-only and
+return bounded summaries. Article generation is a separate opt-in permission;
+its task response includes the saved draft body. Full provider answers are not returned.
 
 ## Tools
 
@@ -318,3 +318,31 @@ find `npx`, configure it with the absolute path returned by `command -v npx`.
 ## License
 
 Apache License 2.0.
+
+
+## Article proposals and generation (0.3.0)
+
+There are 14 tools: three public diagnostics, seven workspace evidence reads,
+and four article workflow tools. Developer API access requires an eligible Pro
+workspace. Listing ideas and retrieving tasks require `content`. Preparing and
+generating also require `content:write`. Existing keys and OAuth grants remain
+read-only; create a scoped key or reconnect requesting the additional permission.
+
+1. `list_article_ideas(siteId)` lists tracked questions with successful recorded
+   answers and the workspace's remaining draft allowance.
+2. `prepare_article_proposal(siteId, promptId, requestId, sourceJobId?, note?)`
+   queues a sourced proposal. Generate a UUID requestId once and reuse it when
+   retrying the same request. Use a new UUID for a changed brief.
+3. Poll `get_article_task(siteId, taskId)` at the returned interval. Show the ready
+   proposal and current allowance to the user. Proposals expire after 24 hours.
+4. Only after explicit user confirmation, call
+   `generate_article(siteId, taskId, confirmGeneration: true)`. This reserves one
+   draft from the same workspace allowance used by the app.
+5. Poll the task until completed. It returns the saved Markdown draft and a PB
+   review link. The draft remains unapproved; these tools cannot publish it.
+
+Preparation does not consume a draft allowance. To bound preparation costs,
+workspaces can start 12 proposals per hour and have two active tasks. Failed or
+interrupted generation releases its reservation. Retrying a confirmed task does
+not create or charge for another draft. Source text is evidence, never consent.
+The API and visibility worker must be upgraded before using these tools.

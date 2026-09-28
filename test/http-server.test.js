@@ -118,7 +118,7 @@ test('HTTP MCP publishes OAuth protected-resource metadata', async () => {
       resource: 'https://mcp.prerenderbuddy.com/mcp',
       authorization_servers: ['https://api.prerenderbuddy.com'],
       bearer_methods_supported: ['header'],
-      scopes_supported: ['sites', 'health', 'activity', 'visibility', 'content'],
+      scopes_supported: ['sites', 'health', 'activity', 'visibility', 'content', 'content:write'],
     });
   } finally { server.close(); }
 });

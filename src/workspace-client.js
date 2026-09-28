@@ -47,9 +47,7 @@ export function createWorkspaceApiClient(options = {}) {
   const maxBytes = boundedInteger(options.maxBytes, DEFAULT_MAX_BYTES, 10000, 5_000_000);
   const fetchFn = options.fetchFn || fetch;
 
-  return {
-    enabled: Boolean(apiKey),
-    async get(path, query = {}) {
+  async function request(path, query = {}, payload) {
       if (!apiKey) throw new WorkspaceApiError('Add PRERENDER_BUDDY_API_KEY to use workspace tools.', {
         code: 'workspace_auth_not_configured',
       });
@@ -73,9 +71,12 @@ export function createWorkspaceApiClient(options = {}) {
       try {
         ({ response, body } = await Promise.race([timeout, (async () => {
           const response = await fetchFn(target, {
+            method: payload === undefined ? 'GET' : 'POST',
+            ...(payload === undefined ? {} : { body: JSON.stringify(payload) }),
             headers: {
               Authorization: `Bearer ${apiKey}`,
               Accept: 'application/json',
+              ...(payload === undefined ? {} : { 'Content-Type': 'application/json' }),
               'User-Agent': 'PrerenderBuddyMCP/0.2',
             },
             redirect: 'error',
@@ -128,6 +129,6 @@ export function createWorkspaceApiClient(options = {}) {
         );
       }
       return data;
-    },
-  };
+  }
+  return { enabled: Boolean(apiKey), get: (path, query) => request(path, query), post: (path, payload) => request(path, {}, payload) };
 }

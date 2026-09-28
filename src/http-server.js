@@ -18,7 +18,7 @@ const JSON_HEADERS = {
 const DEFAULT_MCP_BASE_URL = 'https://mcp.prerenderbuddy.com';
 const DEFAULT_OAUTH_ISSUER = 'https://api.prerenderbuddy.com';
 const OPENAI_APPS_CHALLENGE_TOKEN = 'eng3f8LytQ0x0BeEp7Ke1JA2we3ipZhDoWRHgC7DK_I';
-const OAUTH_SCOPES = ['sites', 'health', 'activity', 'visibility', 'content'];
+const OAUTH_SCOPES = ['sites', 'health', 'activity', 'visibility', 'content', 'content:write'];
 
 function sendJson(res, status, body) {
   res.writeHead(status, JSON_HEADERS);

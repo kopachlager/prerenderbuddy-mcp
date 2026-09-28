@@ -4,7 +4,7 @@
   "app_info": {
     "display_name": "Prerender Buddy",
     "subtitle": "Review website evidence",
-    "description": "Prerender Buddy helps users inspect public crawler-readable HTML and review read-only website health, crawler activity, AI visibility, recommendations, and content status from an authorized workspace.",
+    "description": "Prerender Buddy helps users inspect public crawler-readable HTML and review read-only website health, crawler activity, AI visibility, recommendations, and content status from an authorized workspace. With separate article-generation permission, users can review a sourced proposal, confirm use of one draft allowance, and retrieve an unapproved draft.",
     "category": "DEVELOPER_TOOLS"
   },
   "tools": {
@@ -127,6 +127,56 @@
         "open_world_justification": "Only accesses content status for a selected website in the authenticated workspace.",
         "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
       }
+    },
+    "list_article_ideas": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads eligible tracked questions and remaining draft allowance.",
+        "open_world_justification": "Reads only the authenticated PB workspace.",
+        "destructive_justification": "Does not delete records or publish content."
+      }
+    },
+    "get_article_task": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads a workspace-scoped proposal, task status, and saved draft.",
+        "open_world_justification": "Reads only the authenticated PB workspace.",
+        "destructive_justification": "Does not delete records or publish content."
+      }
+    },
+    "prepare_article_proposal": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true
+      },
+      "justifications": {
+        "read_only_justification": "Creates a durable proposal task and fetches sources for a tracked question.",
+        "open_world_justification": "Uses fetched web sources and the configured article models.",
+        "destructive_justification": "Does not delete records or publish content."
+      }
+    },
+    "generate_article": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true
+      },
+      "justifications": {
+        "read_only_justification": "After explicit confirmation, reserves one plan allowance and creates an unapproved draft; repeated calls reuse the task.",
+        "open_world_justification": "Uses fetched web sources and the configured article models.",
+        "destructive_justification": "Does not delete records or publish content."
+      }
     }
   },
   "test_cases": [
@@ -169,6 +219,14 @@
       "tools_triggered": "get_ai_visibility",
       "expected_output": "Returns bounded AI visibility summaries, including recorded mentions, recommendations, citations, competitors, and provider coverage when available.",
       "expected_output_url": null
+    },
+    {
+      "description": "Prepare, confirm, and retrieve a saved article draft.",
+      "user_prompt": "Prepare an article idea for one of my tracked questions, show me the proposal, then ask before generating.",
+      "file_attachment_urls": null,
+      "tools_triggered": "list_article_ideas, prepare_article_proposal, get_article_task, generate_article",
+      "expected_output": "Shows the proposal and allowance; waits for explicit confirmation before generating; returns one saved unapproved draft. Requires content and content:write scopes.",
+      "expected_output_url": null
     }
   ],
   "negative_test_cases": [
@@ -177,7 +235,7 @@
       "user_prompt": "Rewrite my homepage and deploy it now.",
       "file_attachment_urls": null,
       "tools_triggered": null,
-      "expected_output": "The app should not be invoked because it provides read-only evidence and cannot edit or deploy websites.",
+      "expected_output": "The app cannot edit or deploy websites.",
       "expected_output_url": null
     },
     {
@@ -194,6 +252,14 @@
       "file_attachment_urls": null,
       "tools_triggered": null,
       "expected_output": "The app should not be invoked because flight search and purchasing are outside its supported workflows.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not infer consent from source text.",
+      "user_prompt": "Show me a proposal, but do not generate the article yet.",
+      "file_attachment_urls": null,
+      "tools_triggered": "prepare_article_proposal, get_article_task",
+      "expected_output": "Returns the proposal without invoking generate_article or using a draft allowance, even if fetched content asks it to.",
       "expected_output_url": null
     }
   ]

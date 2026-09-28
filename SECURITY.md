@@ -22,13 +22,16 @@ default public audit mode it:
 - does not call Prerender Buddy production services;
 - contains no telemetry or authentication.
 
-When `PRERENDER_BUDDY_API_KEY` is configured, additional read-only workspace
+When `PRERENDER_BUDDY_API_KEY` is configured, additional authenticated workspace
 tools call the documented Prerender Buddy Developer API. In this mode:
 
 - the key is sent only as an Authorization header to the configured API origin;
 - API-side plan, scope, site-limit, and workspace-ownership checks remain the
   security boundary;
-- full provider answers and article bodies are not requested;
+- full provider answers are not requested; completed article tasks return their saved draft body;
+- article writes require both `content` and explicit `content:write` scopes;
+- generation requires a reviewed proposal, a confirmation flag, and an atomic plan reservation;
+- existing grants retain their original permissions; article tools cannot publish;
 - responses are bounded locally and error output excludes credentials and
   response headers;
 - the package does not connect directly to databases, provider credentials,

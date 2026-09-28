@@ -82,3 +82,15 @@ test('workspace requests reject remote HTTP and foreign origins; redirects are d
   await assert.rejects(client.get('https://other.example/'), /configured origin/);
   await client.get('/v1/developer/sites');
 });
+
+ test('workspace writes are JSON POSTs with no automatic retry and no credentials in the body',async()=>{
+  let calls=0;
+  const client=createWorkspaceApiClient({apiKey:'pb_live_private_test_value',fetchFn:async(url,options)=>{
+    calls++;assert.equal(options.method,'POST');assert.equal(options.redirect,'error');
+    assert.equal(options.headers['Content-Type'],'application/json');
+    assert.deepEqual(JSON.parse(options.body),{confirmGeneration:true});
+    return new Response(JSON.stringify({error:{code:'insufficient_scope',message:'Reconnect with article-generation permission.'}}),{status:403});
+  }});
+  await assert.rejects(client.post('/v1/developer/sites/test/content/tasks/test/generate',{confirmGeneration:true}),e=>e.code==='insufficient_scope');
+  assert.equal(calls,1);
+});

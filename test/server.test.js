@@ -92,7 +92,7 @@ test('protocol calls all three tools with deterministic diagnostics', async () =
   }
 });
 
-test('authenticated mode adds bounded read-only workspace tools', async () => {
+test('authenticated mode adds workspace tools with explicit write annotations', async () => {
   const calls = [];
   const workspace = {
     client: {
@@ -111,11 +111,9 @@ test('authenticated mode adds bounded read-only workspace tools', async () => {
       [...TOOL_NAMES, ...WORKSPACE_TOOL_NAMES],
     );
     for (const tool of listed.tools.filter((item) => WORKSPACE_TOOL_NAMES.includes(item.name))) {
+      const writes = ['prepare_article_proposal', 'generate_article'].includes(tool.name);
       assert.deepEqual(tool.annotations, {
-        readOnlyHint: true,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: false,
+        readOnlyHint: !writes, destructiveHint: false, idempotentHint: true, openWorldHint: writes,
       });
     }
     const siteId = 'fae03b4c-48cd-44f9-a229-60c820630e5c';
@@ -170,4 +168,26 @@ test('protocol returns structured execution errors without stack traces', async 
   } finally {
     await close();
   }
+});
+
+ test('article workflow routes only confirmed writes and uses stable task IDs', async () => {
+  const calls = [];
+  const workspace = { client: { enabled: true,
+    get: async (path, query) => { calls.push({ method: 'GET', path, query }); return {status:'proposal_ready'}; },
+    post: async (path, body) => { calls.push({ method: 'POST', path, body }); return {status:'generation_queued'}; },
+  }};
+  const { client, close } = await createTestClient({}, workspace);
+  const siteId='fae03b4c-48cd-44f9-a229-60c820630e5c', taskId='94e5d8d7-19fa-49e8-b89a-61c1545b7bf5';
+  try {
+    const invalid=await client.callTool({name:'generate_article',arguments:{siteId,taskId,confirmGeneration:false}});
+    assert.equal(invalid.isError,true);assert.equal(calls.length,0);
+    await client.callTool({name:'list_article_ideas',arguments:{siteId}});
+    await client.callTool({name:'prepare_article_proposal',arguments:{siteId,promptId:taskId,requestId:taskId,note:'For beginners'}});
+    await client.callTool({name:'get_article_task',arguments:{siteId,taskId}});
+    await client.callTool({name:'generate_article',arguments:{siteId,taskId,confirmGeneration:true}});
+    assert.equal(calls[0].path,`/v1/developer/sites/${siteId}/content/ideas`);
+    assert.equal(calls[1].body.requestId,taskId);
+    assert.equal(calls[2].method,'GET');
+    assert.deepEqual(calls[3],{method:'POST',path:`/v1/developer/sites/${siteId}/content/tasks/${taskId}/generate`,body:{confirmGeneration:true}});
+  } finally { await close(); }
 });
