@@ -1,4 +1,5 @@
 import { createServer as createNodeServer } from 'node:http';
+import { readFileSync } from 'node:fs';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import {
   isAuthorizedHttpRequest,
@@ -19,6 +20,11 @@ const DEFAULT_MCP_BASE_URL = 'https://mcp.prerenderbuddy.com';
 const DEFAULT_OAUTH_ISSUER = 'https://api.prerenderbuddy.com';
 const OPENAI_APPS_CHALLENGE_TOKEN = 'eng3f8LytQ0x0BeEp7Ke1JA2we3ipZhDoWRHgC7DK_I';
 const OAUTH_SCOPES = ['sites', 'health', 'activity', 'visibility', 'content', 'content:write'];
+const BRAND_ASSETS = new Map([
+  ['/favicon.ico', ['image/x-icon', readFileSync(new URL('./brand/favicon.ico', import.meta.url))]],
+  ['/favicon.svg', ['image/svg+xml', readFileSync(new URL('./brand/icon.svg', import.meta.url))]],
+  ['/icon.png', ['image/png', readFileSync(new URL('./brand/icon.png', import.meta.url))]],
+]);
 
 function sendJson(res, status, body) {
   res.writeHead(status, JSON_HEADERS);
@@ -81,6 +87,17 @@ export function createHttpListener(options = {}) {
     }
 
     const pathname = requestPath(req);
+    const brandAsset = BRAND_ASSETS.get(pathname);
+    if (brandAsset && (req.method === 'GET' || req.method === 'HEAD')) {
+      res.writeHead(200, {
+        'content-type': brandAsset[0],
+        'content-length': brandAsset[1].length,
+        'cache-control': 'public, max-age=3600',
+        'x-content-type-options': 'nosniff',
+      });
+      res.end(req.method === 'HEAD' ? undefined : brandAsset[1]);
+      return;
+    }
     if (pathname === '/health') {
       sendJson(res, 200, {
         ok: true,
