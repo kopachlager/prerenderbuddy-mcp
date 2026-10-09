@@ -13,6 +13,8 @@ npm run check
 npm run pack:check
 ```
 
-This project will not accept browser rendering, hosted monitoring, private API
-access, telemetry, managed routing, cache management, or infrastructure
-deployment features.
+Public diagnostics inspect HTTP responses without executing JavaScript.
+Workspace features use only the documented Prerender Buddy Developer API,
+with its plan, scope, ownership and approval checks. This package does not
+provide direct database or infrastructure access, browser rendering, telemetry,
+managed crawler routing, cache management, or hosted monitoring jobs.

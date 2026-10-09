@@ -1,6 +1,6 @@
 # Prerender Buddy MCP
 
-[![M8ven Score](https://m8ven.ai/badge/mcp/kopachlager-prerenderbuddy-mcp-1gu74q)](https://m8ven.ai/mcp/kopachlager-prerenderbuddy-mcp-1gu74q)
+[![M8ven Score](https://m8ven.ai/badge/mcp/kopachlager-prerenderbuddy-mcp-1gu74q?v=d49341708786317c8c7b04ead9ec58d2)](https://m8ven.ai/mcp/kopachlager-prerenderbuddy-mcp-1gu74q?s=readme)
 
 The MCP companion to the Prerender Buddy AI visibility and crawler-readiness
 platform. It checks what public crawlers can read and can optionally retrieve
@@ -9,7 +9,7 @@ evidence from a Prerender Buddy workspace, with optional confirmed article gener
 The server wraps the open-source
 [`@prerenderbuddy/cli`](https://github.com/kopachlager/prerenderbuddy-cli).
 The public audit tools do not run a browser, execute JavaScript, call the
-Prerender Buddy API, or require an account. Pro users can optionally configure
+Prerender Buddy API, or require an account. Starter, Growth and Pro users can optionally configure
 an API key to add account-aware health, activity, visibility, recommendation,
 and content-status tools.
 
@@ -67,7 +67,7 @@ get_content_status
 Grok Build can launch the local stdio server:
 
 ```bash
-grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.3.0
+grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.3.1
 ```
 
 Or install the official plugin, which already includes Claude-compatible manifests:
@@ -86,17 +86,17 @@ Grok Bot on grok.com, iOS, and Android cannot start a local `npx` process. It ne
 Run Streamable HTTP locally:
 
 ```bash
-npx --yes @prerenderbuddy/mcp@0.3.0 --http --port 8787
+npx --yes @prerenderbuddy/mcp@0.3.1 --http --port 8787
 ```
 
 Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and still rate-limits requests. Binding a public interface (`--host 0.0.0.0` or a non-loopback `HOST`) requires a Bearer token:
 
-- a valid, unrevoked Pro workspace API key (`pb_live_...` or `pb_test_...`), verified with the PB API before each authenticated request, which also enables workspace tools; or
+- a valid, unrevoked eligible workspace API key (`pb_live_...` or `pb_test_...`), verified with the PB API before each authenticated request, which also enables workspace tools; or
 - `MCP_HTTP_SHARED_TOKEN`, a connector token for public diagnostics only.
 
 ```bash
 MCP_TRANSPORT=http HOST=0.0.0.0 PORT=8787 MCP_HTTP_REQUIRE_AUTH=true \
-  npx --yes @prerenderbuddy/mcp@0.3.0
+  npx --yes @prerenderbuddy/mcp@0.3.1
 ```
 
 Health check: `GET /health`. MCP endpoint: `POST /mcp`. Authenticated `GET` and `DELETE` on `/mcp` return 405; this stateless JSON endpoint does not offer an SSE session stream.
@@ -128,7 +128,7 @@ Do not publish an open, unauthenticated URL-fetching endpoint. Hosted use needs 
 
 ## Optional workspace mode
 
-Create a Pro API key in Prerender Buddy and grant only the evidence groups the
+Create a Developer API key on Starter, Growth or Pro in Prerender Buddy and grant only the evidence groups the
 agent needs. Keep the key in the MCP process environment, never in a prompt or
 repository file.
 
@@ -323,8 +323,8 @@ Apache License 2.0.
 ## Article proposals and generation (0.3.0)
 
 There are 14 tools: three public diagnostics, seven workspace evidence reads,
-and four article workflow tools. Developer API access requires an eligible Pro
-workspace. Listing ideas and retrieving tasks require `content`. Preparing and
+and four article workflow tools. Developer API access requires an eligible Starter,
+Growth or Pro workspace. Listing ideas and retrieving tasks require `content`. Preparing and
 generating also require `content:write`. Existing keys and OAuth grants remain
 read-only; create a scoped key or reconnect requesting the additional permission.
 

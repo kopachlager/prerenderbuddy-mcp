@@ -72,7 +72,7 @@ export function createHttpListener(options = {}) {
       await client.get('/v1/developer/sites');
       return true;
     } catch (error) {
-      // The API checks key validity and Pro access before returning this exact
+      // The API checks key validity and eligible plan access before returning this exact
       // scope error. Other scopes remain usable without requiring sites scope.
       return error.status === 403 && error.code === 'insufficient_scope';
     }
