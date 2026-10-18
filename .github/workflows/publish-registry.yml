@@ -1,0 +1,52 @@
+name: Publish MCP Registry
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+concurrency:
+  group: mcp-registry-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    if: github.repository == 'kopachlager/prerenderbuddy-mcp' && (github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Check registry package identity and version
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          import assert from 'node:assert/strict';
+          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+          const registry = JSON.parse(readFileSync('server.json', 'utf8'));
+          const artifact = registry.packages.find(item => item.registryType === 'npm' && item.identifier === pkg.name);
+          assert.equal(registry.name, pkg.mcpName);
+          assert.equal(registry.version, pkg.version);
+          assert.equal(artifact?.version, pkg.version);
+          JS
+      - name: Install verified MCP publisher
+        env:
+          PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+        run: |
+          archive="$RUNNER_TEMP/mcp-publisher_linux_amd64.tar.gz"
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz \
+            --output "$archive"
+          printf '%s  %s\n' "$PUBLISHER_SHA256" "$archive" | sha256sum --check
+          tar -xzf "$archive" -C "$RUNNER_TEMP" mcp-publisher
+          printf '%s\n' "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - name: Validate registry manifest
+        run: mcp-publisher validate server.json
+      - name: Authenticate using GitHub OIDC
+        run: mcp-publisher login github-oidc
+      - name: Publish existing npm release to MCP Registry
+        run: mcp-publisher publish server.json
