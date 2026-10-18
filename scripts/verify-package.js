@@ -12,6 +12,16 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 const temporaryDirectory = mkdtempSync(join(tmpdir(), 'prerenderbuddy-mcp-pack-'));
 
 try {
+  const sourcePackage = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const registry = JSON.parse(readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
+  const registryPackage = registry.packages?.find((item) => item.registryType === 'npm' && item.identifier === sourcePackage.name);
+  if (registry.name !== sourcePackage.mcpName || registry.version !== sourcePackage.version || registryPackage?.version !== sourcePackage.version) {
+    throw new Error('MCP registry name and package versions must match package.json');
+  }
+  if (typeof registry.description !== 'string' || !registry.description.trim() || Array.from(registry.description).length > 100) {
+    throw new Error('MCP registry description must contain 1–100 characters');
+  }
+
   const output = execFileSync('npm', [
     'pack',
     '--json',
