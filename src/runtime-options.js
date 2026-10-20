@@ -43,6 +43,8 @@ export function parseRuntimeOptions(argv = process.argv.slice(2), env = process.
     sharedToken,
     mcpBaseUrl: env.MCP_PUBLIC_BASE_URL,
     oauthIssuer: env.MCP_OAUTH_ISSUER,
+    usageEnabled: booleanEnv(env.MCP_USAGE_EVENTS_ENABLED, false),
+    usageToken: env.MCP_USAGE_INGEST_TOKEN,
     ingressRateLimitMax: integerEnv(env.MCP_HTTP_INGRESS_RATE_LIMIT_MAX, 120, 1, 10000),
     rateLimitMax: integerEnv(env.MCP_HTTP_RATE_LIMIT_MAX, 30, 1, 1000),
     rateLimitWindowMs: integerEnv(env.MCP_HTTP_RATE_LIMIT_WINDOW_MS, 60_000, 1000, 3_600_000),
