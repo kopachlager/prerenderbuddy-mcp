@@ -10,6 +10,8 @@ import {
 import { createRateLimiter, clientKey, credentialKey } from './rate-limit.js';
 import { createWorkspaceApiClient } from './workspace-client.js';
 import { createServer, SERVER_VERSION } from './server.js';
+import { randomUUID } from 'node:crypto';
+import { createHostedUsageReporter, emitUsage, signupDestination, isLinkPreview } from './hosted-usage.js';
 
 const JSON_HEADERS = {
   'content-type': 'application/json; charset=utf-8',
@@ -61,6 +63,8 @@ export function createHttpListener(options = {}) {
   const mcpBaseUrl = String(options.mcpBaseUrl || process.env.MCP_PUBLIC_BASE_URL || DEFAULT_MCP_BASE_URL).replace(/\/$/, '');
   const oauthIssuer = String(options.oauthIssuer || process.env.MCP_OAUTH_ISSUER || DEFAULT_OAUTH_ISSUER).replace(/\/$/, '');
   const protectedResourceUrl = `${mcpBaseUrl}/.well-known/oauth-protected-resource`;
+  const reportUsage = options.usageReporter || createHostedUsageReporter({ enabled: options.usageEnabled, token: options.usageToken });
+  const linkTracking = createRateLimiter({ max: 30, windowMs: 60_000 });
   const limiter = options.limiter || createRateLimiter({
     windowMs: options.rateLimitWindowMs,
     max: options.rateLimitMax,
@@ -87,6 +91,17 @@ export function createHttpListener(options = {}) {
     }
 
     const pathname = requestPath(req);
+    if (pathname.startsWith('/go/') && (req.method === 'GET' || req.method === 'HEAD')) {
+      const source = pathname.slice(4);
+      const destination = signupDestination(source);
+      if (!destination) { sendJson(res, 404, { error: { code: 'not_found' } }); return; }
+      if (req.method === 'GET' && !isLinkPreview(req.headers) && linkTracking.allow(clientKey(req))) {
+        emitUsage(reportUsage, { eventId: randomUUID(), kind: 'link_open', source });
+      }
+      res.writeHead(302, { location: destination, 'cache-control': 'no-store', 'x-robots-tag': 'noindex' });
+      res.end();
+      return;
+    }
     const brandAsset = BRAND_ASSETS.get(pathname);
     if (brandAsset && (req.method === 'GET' || req.method === 'HEAD')) {
       res.writeHead(200, {
@@ -173,6 +188,8 @@ export function createHttpListener(options = {}) {
     });
     const server = createServer({
       diagnostics: options.diagnostics,
+      onToolUsage: reportUsage,
+      websiteUrl: 'https://mcp.prerenderbuddy.com/go/mcp',
       workspace: {
         apiKey: requestWorkspaceApiKey(req.headers, {}),
       },

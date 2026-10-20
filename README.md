@@ -311,9 +311,26 @@ find `npx`, configure it with the absolute path returned by `command -v npx`.
 
 ## Next steps
 
+### Hosted service usage
+
+PB's managed HTTP service records tool name, success/failure, duration and time
+for aggregate administration. It does not send tool arguments, scanned URLs,
+page content, answers, credentials or account identifiers to this collector.
+The local stdio plugin remains telemetry-free. Self-hosted HTTP collection is
+off by default and requires both `MCP_USAGE_EVENTS_ENABLED=true` and a private
+`MCP_USAGE_INGEST_TOKEN` configured by the operator.
+
+Account links can use `https://mcp.prerenderbuddy.com/go/mcp` (or `/go/chatgpt`,
+`/go/claude`, `/go/cursor`, `/go/grok`, `/go/glama`, `/go/github`). These redirect
+to PB with integration campaign tags. Known preview/prefetch requests and HEAD
+requests are excluded from opens. Opens are requests, not verified people;
+signups use PB's existing consent-aware first-touch attribution. Existing
+untagged links and historical local usage cannot be reconstructed. Collection
+is best-effort and never blocks a tool result or redirect.
+
 - Run the [CLI directly](https://github.com/kopachlager/prerenderbuddy-cli).
 - Compare all [Prerender Buddy developer tools](https://prerenderbuddy.com/developer-tools).
-- Use the [managed Prerender Buddy service](https://prerenderbuddy.com) when diagnostics show that production rendering or monitoring is needed.
+- Use the [managed Prerender Buddy service](https://mcp.prerenderbuddy.com/go/github) when diagnostics show that production rendering or monitoring is needed.
 
 ## License
 
