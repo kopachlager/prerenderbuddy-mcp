@@ -46,4 +46,4 @@ jobs:
             exit 1
           fi
       - name: Publish to npm with trusted publishing
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public --tag legacy
