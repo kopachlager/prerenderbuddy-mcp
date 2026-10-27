@@ -3,7 +3,7 @@
   "name": "io.github.kopachlager/prerenderbuddy-mcp",
   "title": "Prerender Buddy",
   "description": "Crawler diagnostics, AI visibility evidence and article drafts for review in Prerender Buddy.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "homepage": "https://prerenderbuddy.com/developer-tools",
   "repository": {
     "url": "https://github.com/kopachlager/prerenderbuddy-mcp",
@@ -14,7 +14,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@prerenderbuddy/mcp",
-      "version": "0.3.2",
+      "version": "0.3.3",
       "transport": {
         "type": "stdio"
       }
