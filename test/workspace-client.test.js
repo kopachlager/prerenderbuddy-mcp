@@ -57,6 +57,22 @@ test('workspace client treats unresolved placeholders as disabled', () => {
   assert.equal(client.enabled, false);
 });
 
+test('workspace errors preserve retry guidance and only safe required scopes', async () => {
+  let calls = 0;
+  const client = createWorkspaceApiClient({ apiKey: 'fixture', fetchFn: async () => {
+    calls++;
+    return new Response(JSON.stringify({error:{code:'insufficient_scope',message:'Reconnect with the required permission.',
+      details:{requiredScopes:['search','search','content:write','pb_live_private_test_value'],secret:'do not return'}},requestId:'request-safe'}),
+      {status:429,headers:{'Retry-After':'45'}});
+  }});
+  await assert.rejects(client.get('/v1/developer/usage'), error => {
+    assert.equal(error.retryAfterSeconds,45); assert.equal(error.requestId,'request-safe');
+    assert.deepEqual(error.requiredScopes,['search','content:write']);
+    assert.doesNotMatch(JSON.stringify(error),/private_test|do not return/); return true;
+  });
+  assert.equal(calls,1,'A failed request must not automatically repeat a paid operation');
+});
+
 test('workspace client limits streamed bytes without trusting content length', async () => {
   let cancelled = false;
   const client = createWorkspaceApiClient({ apiKey: 'test', maxBytes: 10000,

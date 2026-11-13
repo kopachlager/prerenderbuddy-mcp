@@ -1,0 +1,31 @@
+export const WORKSPACE_API_OPERATIONS = Object.freeze({
+  list_sites: ['get', '/v1/developer/sites'],
+  get_site_overview: ['get', '/v1/developer/sites/{id}/overview'],
+  get_health_evidence: ['get', '/v1/developer/sites/{id}/health'],
+  get_crawler_activity: ['get', '/v1/developer/sites/{id}/crawler-activity'],
+  get_ai_visibility: ['get', '/v1/developer/sites/{id}/visibility'],
+  get_recommendations: ['get', '/v1/developer/sites/{id}/recommendations'],
+  get_content_status: ['get', '/v1/developer/sites/{id}/content'],
+  list_article_ideas: ['get', '/v1/developer/sites/{id}/content/ideas'],
+  prepare_article_proposal: ['post', '/v1/developer/sites/{id}/content/proposals'],
+  get_article_task: ['get', '/v1/developer/sites/{id}/content/tasks/{taskId}'],
+  generate_article: ['post', '/v1/developer/sites/{id}/content/tasks/{taskId}/generate'],
+  get_workspace_usage: ['get', '/v1/developer/usage'],
+  get_ai_crawler_visits: ['get', '/v1/developer/sites/{id}/crawler-visits'],
+  get_ai_answer_details: ['get', '/v1/developer/sites/{id}/visibility/answers'],
+  get_google_search_performance: ['get', '/v1/developer/sites/{id}/search'],
+  get_google_search_opportunities: ['get', '/v1/developer/sites/{id}/search/opportunities'],
+  get_saved_question_research: ['get', '/v1/developer/sites/{id}/research'],
+  get_ai_understanding: ['get', '/v1/developer/sites/{id}/understanding'],
+  get_ai_referrals: ['get', '/v1/developer/sites/{id}/referrals'],
+});
+
+export const WORKSPACE_TOOL_SCOPES = Object.freeze({
+  list_sites: ['sites'], get_site_overview: ['sites'], get_health_evidence: ['health'],
+  get_crawler_activity: ['activity'], get_ai_visibility: ['visibility'], get_recommendations: ['visibility'],
+  get_content_status: ['content'], list_article_ideas: ['content'], get_article_task: ['content'],
+  prepare_article_proposal: ['content','content:write'], generate_article: ['content','content:write'],
+  get_workspace_usage: ['usage'], get_ai_crawler_visits: ['activity'], get_ai_answer_details: ['visibility'],
+  get_google_search_performance: ['search'], get_google_search_opportunities: ['search'],
+  get_saved_question_research: ['research'], get_ai_understanding: ['understanding'], get_ai_referrals: ['referrals'],
+});

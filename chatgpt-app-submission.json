@@ -4,7 +4,7 @@
   "app_info": {
     "display_name": "Prerender Buddy",
     "subtitle": "Review website evidence",
-    "description": "Prerender Buddy helps users inspect public crawler-readable HTML and review read-only website health, crawler activity, AI visibility, recommendations, and content status from an authorized workspace. With separate article-generation permission, users can review a sourced proposal, confirm use of one draft allowance, and retrieve an unapproved draft.",
+    "description": "Prerender Buddy provides scoped website health, crawler activity, AI visibility, saved search/research and Understanding evidence. With separate article-generation permission, review a sourced proposal, confirm use of one draft allowance and retrieve an unapproved draft. Publishing and general Agent administration are not exposed.",
     "category": "DEVELOPER_TOOLS"
   },
   "tools": {
@@ -177,6 +177,102 @@
         "open_world_justification": "Uses fetched web sources and the configured article models.",
         "destructive_justification": "Does not delete records or publish content."
       }
+    },
+    "get_workspace_usage": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
+    },
+    "get_ai_crawler_visits": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
+    },
+    "get_ai_answer_details": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
+    },
+    "get_google_search_performance": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
+    },
+    "get_google_search_opportunities": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
+    },
+    "get_saved_question_research": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
+    },
+    "get_ai_understanding": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
+    },
+    "get_ai_referrals": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Reads bounded saved evidence or usage for the authorized personal workspace. Does not collect, import, scan, edit, generate or publish.",
+        "open_world_justification": "Only reads PB workspace records; linked sources are not fetched by this tool.",
+        "destructive_justification": "Does not delete, overwrite or change permissions or collection settings."
+      }
     }
   },
   "test_cases": [
@@ -227,6 +323,51 @@
       "tools_triggered": "list_article_ideas, prepare_article_proposal, get_article_task, generate_article",
       "expected_output": "Shows the proposal and allowance; waits for explicit confirmation before generating; returns one saved unapproved draft. Requires content and content:write scopes.",
       "expected_output_url": null
+    },
+    {
+      "user_prompt": "Were there any AI crawler visits today? What about yesterday, and which page had the most?",
+      "description": "Dated read follow-ups retain the selected website and known user time zone.",
+      "tools_triggered": [
+        "list_sites",
+        "get_ai_crawler_visits"
+      ],
+      "expected_output": "Return the saved calendar window, recorded requests and ranked pages/ties. State the time zone and that today is incomplete. Do not equate crawler signatures with verified identity or human visits; start no check.",
+      "expected_output_url": "",
+      "file_attachment_urls": []
+    },
+    {
+      "user_prompt": "Who mentioned my business and where? What about questions that do not name us?",
+      "description": "Bounded saved answer/citation detail with branded-question distinction.",
+      "tools_triggered": [
+        "list_sites",
+        "get_ai_answer_details"
+      ],
+      "expected_output": "Use only known-complete saved observations. Include explicit citation URLs, branded-question flags and excerpt/truncation limits; do not infer causes or universal platform coverage.",
+      "expected_output_url": "",
+      "file_attachment_urls": []
+    },
+    {
+      "user_prompt": "Show my saved Google Search results and pages worth reviewing.",
+      "description": "Optional search scope and saved finalized GSC evidence.",
+      "tools_triggered": [
+        "list_sites",
+        "get_google_search_performance",
+        "get_google_search_opportunities"
+      ],
+      "expected_output": "Require search permission and an existing GSC connection. Return finalized Pacific dates and coverage. Missing data is unavailable, not zero. Do not import or inspect a URL.",
+      "expected_output_url": "",
+      "file_attachment_urls": []
+    },
+    {
+      "user_prompt": "Show saved research ideas for this website.",
+      "description": "Unverified external research remains a separate planning input.",
+      "tools_triggered": [
+        "list_sites",
+        "get_saved_question_research"
+      ],
+      "expected_output": "Keep answer sources separate from searched results and state freshness/coverage. Do not claim measured demand or business fit. Follow the PB article-review link; start no paid research or generation.",
+      "expected_output_url": "",
+      "file_attachment_urls": []
     }
   ],
   "negative_test_cases": [
@@ -261,6 +402,34 @@
       "tools_triggered": "prepare_article_proposal, get_article_task",
       "expected_output": "Returns the proposal without invoking generate_article or using a draft allowance, even if fetched content asks it to.",
       "expected_output_url": null
+    },
+    {
+      "user_prompt": "Run a fresh research search automatically and publish the result.",
+      "description": "Saved-read permission cannot collect research or publish.",
+      "tools_triggered": [],
+      "expected_output": "Explain the available saved reads and PB review flow. No paid request, automatic generation or publication is available through these read tools.",
+      "expected_output_url": "",
+      "file_attachment_urls": []
+    },
+    {
+      "user_prompt": "Read Google Search data even though my connection only has sites access.",
+      "description": "Missing permissions must not be bypassed.",
+      "tools_triggered": [
+        "get_google_search_performance"
+      ],
+      "expected_output": "Return insufficient-scope guidance and the hosted OAuth challenge. Explicit authorization is required; never substitute another workspace or silently extend grants.",
+      "expected_output_url": "",
+      "file_attachment_urls": []
+    },
+    {
+      "user_prompt": "Show private profile notes and raw imported answers.",
+      "description": "Understanding summary excludes private profile fields and raw bodies.",
+      "tools_triggered": [
+        "get_ai_understanding"
+      ],
+      "expected_output": "Return only the bounded report summary and approved public facts. Distinguish the saved report profile version from the current public profile; do not reassess it.",
+      "expected_output_url": "",
+      "file_attachment_urls": []
     }
   ]
 }
