@@ -110,6 +110,7 @@ export function createHttpListener(options = {}) {
     const token = normalizeConfiguredApiKey(bearerToken(req.headers))
       || normalizeConfiguredApiKey(req.headers['x-prerender-buddy-api-key']);
     if (!ingress.allow('global') || !ingress.allow(clientKey(req))) {
+      res.setHeader('retry-after', String(Math.ceil((options.rateLimitWindowMs || 60_000) / 1000)));
       sendJson(res, 429, {
         error: { code: 'rate_limited', message: 'Too many MCP requests. Retry after the rate-limit window.' },
       });
@@ -128,6 +129,7 @@ export function createHttpListener(options = {}) {
     }
 
     if (!limiter.allow(token ? credentialKey(token) : clientKey(req))) {
+      res.setHeader('retry-after', String(Math.ceil((options.rateLimitWindowMs || 60_000) / 1000)));
       sendJson(res, 429, { error: { code: 'rate_limited', message: 'Too many MCP requests. Retry after the rate-limit window.' } });
       return;
     }
