@@ -46,6 +46,8 @@ jobs:
           printf '%s\n' "$RUNNER_TEMP" >> "$GITHUB_PATH"
       - name: Validate registry manifest
         run: mcp-publisher validate server.json
+      - name: Wait for exact npm release propagation
+        run: node scripts/wait-npm-release.js
       - name: Authenticate using GitHub OIDC
         run: mcp-publisher login github-oidc
       - name: Publish existing npm release to MCP Registry

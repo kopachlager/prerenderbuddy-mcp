@@ -67,7 +67,7 @@ get_content_status
 Grok Build can launch the local stdio server:
 
 ```bash
-grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.3.3
+grok mcp add prerenderbuddy -- npx --yes @prerenderbuddy/mcp@0.4.0
 ```
 
 Or install the official plugin, which already includes Claude-compatible manifests:
@@ -86,7 +86,7 @@ Grok Bot on grok.com, iOS, and Android cannot start a local `npx` process. It ne
 Run Streamable HTTP locally:
 
 ```bash
-npx --yes @prerenderbuddy/mcp@0.3.3 --http --port 8787
+npx --yes @prerenderbuddy/mcp@0.4.0 --http --port 8787
 ```
 
 Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and still rate-limits requests. Binding a public interface (`--host 0.0.0.0` or a non-loopback `HOST`) requires a Bearer token:
@@ -96,7 +96,7 @@ Loopback HTTP (`127.0.0.1`) allows unauthenticated public diagnostic tools and s
 
 ```bash
 MCP_TRANSPORT=http HOST=0.0.0.0 PORT=8787 MCP_HTTP_REQUIRE_AUTH=true \
-  npx --yes @prerenderbuddy/mcp@0.3.3
+  npx --yes @prerenderbuddy/mcp@0.4.0
 ```
 
 Health check: `GET /health`. MCP endpoint: `POST /mcp`. Authenticated `GET` and `DELETE` on `/mcp` return 405; this stateless JSON endpoint does not offer an SSE session stream.
@@ -339,8 +339,8 @@ Apache License 2.0.
 
 ## Article proposals and generation (0.3.0)
 
-There are 14 tools: three public diagnostics, seven workspace evidence reads,
-and four article workflow tools. Developer API access requires an eligible Starter,
+There are 22 tools: three public diagnostics, seven original workspace evidence reads,
+four article workflow tools and eight additional saved-evidence reads. Developer API access requires an eligible Starter,
 Growth or Pro workspace. Listing ideas and retrieving tasks require `content`. Preparing and
 generating also require `content:write`. Existing keys and OAuth grants remain
 read-only; create a scoped key or reconnect requesting the additional permission.
@@ -363,3 +363,30 @@ workspaces can start 12 proposals per hour and have two active tasks. Failed or
 interrupted generation releases its reservation. Retrying a confirmed task does
 not create or charge for another draft. Source text is evidence, never consent.
 The API and visibility worker must be upgraded before using these tools.
+
+## Saved evidence and explicit permissions (0.4.0)
+
+Use the selected website and reporting window for follow-up questions. Saved reads do not start provider checks, Google imports, scans, research requests or article work. Existing credentials keep their scopes. Grant only the optional permissions you need:
+
+| Tool | Permission | Evidence |
+| --- | --- | --- |
+| `get_workspace_usage` | `usage` | Current plan and render/API usage; article draft allowance stays with `list_article_ideas` |
+| `get_ai_crawler_visits` | `activity` | Calendar today/yesterday or a retained window; AI crawler signatures and ranked pages with ties |
+| `get_ai_answer_details` | `visibility` | Known-complete saved answers only, bounded excerpts, explicit citation URLs and whether the question names the business |
+| `get_google_search_performance` | `search` | Saved finalized GSC clicks, impressions, pages and queries |
+| `get_google_search_opportunities` | `search` | Saved GSC pages to review, not confirmed defects or guaranteed improvements |
+| `get_saved_question_research` | `research` | Optional unverified external questions, sources and searched results |
+| `get_ai_understanding` | `understanding` | Saved report groups and approved public facts; no private notes or raw answer/capture bodies |
+| `get_ai_referrals` | `referrals` | Observable AI-attributed sessions and leading landing pages |
+
+`search`, `research`, `understanding` and `referrals` are excluded from default keys and OAuth grants. OAuth `usage` also requires an explicit request. Add `sites` to discover website IDs. In PB, create a narrowly scoped key; remote OAuth clients must request the additional scopes and show PB's consent screen. Clients may need refreshed tool discovery or a new connector revision before the new tools appear. Tool metadata declares the required OAuth scopes; a missing hosted scope returns a standard MCP authorization challenge as well as safe required-scope details. Never grant publishing access through this release.
+
+Calendar windows accept `period` and a known IANA `timeZone`; UTC is the default and should be stated if no user zone is known. Today is incomplete. GSC is separate: 7 or 28 finalized Pacific days, newest three days excluded, so it cannot answer today or an exact 30-day comparison. Missing evidence is not a zero result. Crawler user-agent classification does not verify identity or establish a citation, indexing or a human visit.
+
+The original aggregate visibility read retains its compatibility rules. The new answer-detail read excludes legacy unknown completeness from presence conclusions. Its examples are excerpts, not full answers, and different questions/configurations do not establish a trend or causality. Preserve source relationships and coverage instead of converting returned/searched results into explicit citations.
+
+Research quality is not assumed. A question or topic match does not establish business fit, measured demand or a verified product claim. Use the returned PB review link for its existing business-fit and proposal workflow. Approved public business facts and conditions already flow through the backend article pipeline; changed facts require fresh proposal review.
+
+Workspace tool output schemas are generated from Developer API 1.2.0, with additive response fields retained. Maintainers can regenerate them from a reviewed OpenAPI JSON file with `node scripts/sync-workspace-schemas.js path/to/openapi.json`. `Retry-After` and safe required scopes survive API errors. Respect polling delays and reuse the original request/task identity; do not automatically repeat paid work.
+
+The companion plugin bundles intentionally remain on the separately maintained read-only 0.2 line. They do not gain these tools or writing permissions just because the hosted service is upgraded.

@@ -1,0 +1,2962 @@
+{
+  "source": "Prerender Buddy Developer API",
+  "contractVersion": "1.2.0",
+  "tools": {
+    "list_sites": {
+      "type": "object",
+      "properties": {
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "domain": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "integrationMode": {
+                "type": "string"
+              },
+              "proxyStatus": {
+                "type": "string"
+              },
+              "cacheTtlMinutes": {
+                "type": "integer"
+              },
+              "withinPlanLimit": {
+                "type": "boolean"
+              },
+              "lastPrerenderAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "plan": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Effective personal-workspace plan, including preserved legacy/custom names.",
+              "examples": [
+                "starter",
+                "growth",
+                "pro",
+                "agency",
+                "custom"
+              ]
+            },
+            "developerApiEnabled": {
+              "type": "boolean"
+            },
+            "siteLimit": {
+              "type": "integer"
+            },
+            "sitesUsed": {
+              "type": "integer"
+            },
+            "renderLimit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mcpSafetyNote"
+      ]
+    },
+    "get_site_overview": {
+      "type": "object",
+      "properties": {
+        "site": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string"
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "integrationMode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "proxyStatus": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "setupState": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "setupErrorCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cacheTtlMinutes": {
+              "type": "integer"
+            },
+            "lastPrerenderAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "monitoring": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "cadence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "monitoredPages": {
+              "type": "integer"
+            },
+            "openIncidents": {
+              "type": "integer"
+            },
+            "lastRunAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "nextRunAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "crawlerActivity30Days": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "integer"
+            },
+            "latestAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "aiVisibility": {
+          "type": "object",
+          "properties": {
+            "configured": {
+              "type": "boolean"
+            },
+            "project": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "brandName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "country": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "language": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "promptCount": {
+                  "type": "integer"
+                },
+                "competitorCount": {
+                  "type": "integer"
+                },
+                "latestCollectionAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "site",
+        "monitoring",
+        "crawlerActivity30Days",
+        "aiVisibility",
+        "requestId",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_health_evidence": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "configuration": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "cadence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "monitoredPages": {
+              "type": "integer"
+            },
+            "lastRunAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "nextRunAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "latestScan": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "checkedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "verdict": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "score": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "page": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "h1": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "noindex": {
+                  "type": "boolean"
+                },
+                "renderedCheckAvailable": {
+                  "type": "boolean"
+                },
+                "jsonLd": {
+                  "type": "boolean"
+                },
+                "openGraph": {
+                  "type": "boolean"
+                },
+                "crawlerTextLength": {
+                  "type": "integer"
+                },
+                "renderedTextLength": {
+                  "type": "integer"
+                },
+                "jsonLdTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "crawlerChecks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ok": {
+                    "type": "boolean"
+                  },
+                  "statusCode": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "robots": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true
+            }
+          }
+        },
+        "incidents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "severity": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "detail": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "firstSeenAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "lastSeenAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "discovery": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "checkedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "robots": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "found": {
+                  "type": "boolean"
+                },
+                "statusCode": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "finalUrl": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "suggestions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "sitemap": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "found": {
+                  "type": "boolean"
+                },
+                "statusCode": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "finalUrl": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "suggestions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "llms": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "found": {
+                  "type": "boolean"
+                },
+                "statusCode": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "finalUrl": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "suggestions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "reachability": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "checkedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "summary": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": true
+                },
+                "pages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "statusCode": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "noindex": {
+                        "type": "boolean"
+                      },
+                      "canonicalState": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "issues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "proposedFixes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kind": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "risk": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "content": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "readiness": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "observedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "url": {
+              "type": "string"
+            },
+            "schemaVersion": {
+              "type": "string"
+            },
+            "facts": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "configuration",
+        "latestScan",
+        "incidents",
+        "discovery",
+        "proposedFixes",
+        "readiness",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_crawler_activity": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "periodDays": {
+          "type": "integer"
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "integer"
+            },
+            "uniquePages": {
+              "type": "integer"
+            },
+            "cacheHits": {
+              "type": "integer"
+            },
+            "freshRenders": {
+              "type": "integer"
+            },
+            "staleHits": {
+              "type": "integer"
+            },
+            "quotaBlockedRequests": {
+              "type": "integer"
+            },
+            "unknownCacheResponses": {
+              "type": "integer"
+            },
+            "failedRequests": {
+              "type": "integer"
+            },
+            "sharedResponses": {
+              "type": "integer",
+              "description": "COALESCED or legacy SHARED observations; not additional fresh renders."
+            },
+            "freshResponses": {
+              "type": "integer",
+              "deprecated": true,
+              "description": "Legacy count of all non-HIT responses. Use freshRenders for MISS observations."
+            },
+            "latestAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "traffic": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "ai",
+                  "search",
+                  "social",
+                  "other"
+                ]
+              },
+              "requests": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "pagesReturned": {
+              "type": "integer"
+            },
+            "uniquePages": {
+              "type": "integer"
+            },
+            "pagesTruncated": {
+              "type": "boolean"
+            }
+          }
+        },
+        "metricDefinitions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string"
+              },
+              "requests": {
+                "type": "integer"
+              },
+              "latestAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "requests": {
+                "type": "integer"
+              },
+              "latestCacheStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "latestStatusCode": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "latestAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "periodDays",
+        "summary",
+        "platforms",
+        "pages",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_ai_visibility": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "configured": {
+          "type": "boolean"
+        },
+        "historyDays": {
+          "type": "integer"
+        },
+        "project": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "brandName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "promptCount": {
+              "type": "integer"
+            },
+            "competitorCount": {
+              "type": "integer"
+            },
+            "latestCollectionAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "metricDefinitions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "evidenceScope": {
+          "type": "object",
+          "properties": {
+            "historyDays": {
+              "type": "integer"
+            },
+            "providers": {
+              "type": "string"
+            },
+            "prompts": {
+              "type": "string"
+            },
+            "selection": {
+              "type": "string"
+            }
+          }
+        },
+        "latestAvailableCollection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "selection": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "requestedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "attributionCorrectedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "expectedRuns": {
+              "type": "integer"
+            },
+            "successfulRuns": {
+              "type": "integer"
+            },
+            "failedRuns": {
+              "type": "integer"
+            },
+            "cancelledRuns": {
+              "type": "integer"
+            },
+            "missingObservations": {
+              "type": "integer"
+            },
+            "attemptedRuns": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "promptVersionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "latestCompletedCollection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "selection": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "requestedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "attributionCorrectedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "expectedRuns": {
+              "type": "integer"
+            },
+            "successfulRuns": {
+              "type": "integer"
+            },
+            "failedRuns": {
+              "type": "integer"
+            },
+            "cancelledRuns": {
+              "type": "integer"
+            },
+            "missingObservations": {
+              "type": "integer"
+            },
+            "attemptedRuns": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "promptVersionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "attributionCorrections": {
+          "type": "object",
+          "properties": {
+            "correctedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "citationRecords": {
+              "type": "integer"
+            },
+            "mentionRecords": {
+              "type": "integer"
+            },
+            "meaning": {
+              "type": "string"
+            }
+          }
+        },
+        "latestCollection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "status": {
+              "type": "string"
+            },
+            "expectedRuns": {
+              "type": "integer"
+            },
+            "succeededRuns": {
+              "type": "integer"
+            },
+            "failedRuns": {
+              "type": "integer"
+            },
+            "requestedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string"
+              },
+              "recordedAnswers": {
+                "type": "integer"
+              },
+              "mentioned": {
+                "type": "integer"
+              },
+              "recommended": {
+                "type": "integer"
+              },
+              "citedSources": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "sourceDomains": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hostname": {
+                "type": "string"
+              },
+              "sourceClass": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recordedAnswers": {
+                "type": "integer"
+              },
+              "explicitCitations": {
+                "type": "integer"
+              },
+              "ownedSourceRecords": {
+                "type": "integer"
+              },
+              "explicitCitationOccurrences": {
+                "type": "integer"
+              },
+              "distinctExplicitCitedPages": {
+                "type": "integer"
+              },
+              "ownedExplicitCitationOccurrences": {
+                "type": "integer"
+              },
+              "returnedSourceRecords": {
+                "type": "integer"
+              },
+              "searchedSourceRecords": {
+                "type": "integer"
+              },
+              "ownedCitations": {
+                "type": "integer",
+                "deprecated": true,
+                "description": "Legacy owned source records across explicit, returned and searched relationships; use ownedExplicitCitationOccurrences for explicit citations."
+              }
+            }
+          }
+        },
+        "competitors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "domains": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "appearances": {
+                "type": "integer"
+              },
+              "recommended": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "configured",
+        "project",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_recommendations": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "configured": {
+          "type": "boolean"
+        },
+        "project": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "brandName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "promptCount": {
+              "type": "integer"
+            },
+            "competitorCount": {
+              "type": "integer"
+            },
+            "latestCollectionAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "collection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "selection": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "requestedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "attributionCorrectedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "expectedRuns": {
+              "type": "integer"
+            },
+            "successfulRuns": {
+              "type": "integer"
+            },
+            "failedRuns": {
+              "type": "integer"
+            },
+            "cancelledRuns": {
+              "type": "integer"
+            },
+            "missingObservations": {
+              "type": "integer"
+            },
+            "attemptedRuns": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "promptVersionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "latestAvailableCollection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "selection": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "requestedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "attributionCorrectedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "expectedRuns": {
+              "type": "integer"
+            },
+            "successfulRuns": {
+              "type": "integer"
+            },
+            "failedRuns": {
+              "type": "integer"
+            },
+            "cancelledRuns": {
+              "type": "integer"
+            },
+            "missingObservations": {
+              "type": "integer"
+            },
+            "attemptedRuns": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "promptVersionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "diagnosis": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "jobId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "projectId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "collection": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "selection": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "requestedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "completedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "attributionCorrectedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "expectedRuns": {
+                  "type": "integer"
+                },
+                "successfulRuns": {
+                  "type": "integer"
+                },
+                "failedRuns": {
+                  "type": "integer"
+                },
+                "cancelledRuns": {
+                  "type": "integer"
+                },
+                "missingObservations": {
+                  "type": "integer"
+                },
+                "attemptedRuns": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "providers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "promptVersionIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            "metricDefinitions": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "readiness": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "snapshotId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "schemaVersion": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "observedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            "observations": {
+              "type": "object",
+              "properties": {
+                "successfulRuns": {
+                  "type": "integer"
+                },
+                "mentionedRuns": {
+                  "type": "integer"
+                },
+                "recommendedRuns": {
+                  "type": "integer"
+                },
+                "missingMentionRuns": {
+                  "type": "integer"
+                },
+                "explicitCitedSources": {
+                  "type": "integer"
+                },
+                "ownedExplicitSources": {
+                  "type": "integer"
+                },
+                "thirdPartyExplicitSources": {
+                  "type": "integer"
+                }
+              }
+            },
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "opportunities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "configured",
+        "diagnosis",
+        "requestId",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_content_status": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "configured": {
+          "type": "boolean"
+        },
+        "project": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "brandName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "promptCount": {
+              "type": "integer"
+            },
+            "competitorCount": {
+              "type": "integer"
+            },
+            "latestCollectionAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "drafts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "promptId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid"
+              },
+              "sourceCollectionId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid"
+              },
+              "prompt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "angle": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rationale": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "scheduledFor": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "configured",
+        "drafts",
+        "mcpSafetyNote"
+      ]
+    },
+    "list_article_ideas": {
+      "type": "object",
+      "properties": {
+        "ideas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "projectId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "promptId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "sourceJobId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "question": {
+                "type": "string"
+              },
+              "recordedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "allowance": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "used": {
+              "type": "integer"
+            },
+            "remaining": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "periodStart": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "periodEnd": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "sharedAcrossWorkspace": {
+              "type": "boolean"
+            }
+          }
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ideas",
+        "allowance",
+        "mcpSafetyNote"
+      ]
+    },
+    "prepare_article_proposal": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "promptId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sourceJobId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "angle": {
+              "type": "string"
+            },
+            "intent": {
+              "type": "string"
+            },
+            "reader": {
+              "type": "string"
+            },
+            "directAnswer": {
+              "type": "string"
+            },
+            "outline": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "questions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "verifiedFacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "claim": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "claimsToQualify": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "expiresAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "allowance": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "used": {
+              "type": "integer"
+            },
+            "remaining": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "periodStart": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "periodEnd": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "sharedAcrossWorkspace": {
+              "type": "boolean"
+            }
+          }
+        },
+        "confirmationRequired": {
+          "type": "boolean"
+        },
+        "draft": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "bodyFormat": {
+              "type": "string"
+            },
+            "rationale": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "approvalStatus": {
+              "type": "string"
+            },
+            "reviewUrl": {
+              "type": "string"
+            }
+          }
+        },
+        "pollAfterSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId",
+        "status",
+        "siteId",
+        "allowance",
+        "confirmationRequired",
+        "draft",
+        "pollAfterSeconds",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_article_task": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "promptId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sourceJobId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "angle": {
+              "type": "string"
+            },
+            "intent": {
+              "type": "string"
+            },
+            "reader": {
+              "type": "string"
+            },
+            "directAnswer": {
+              "type": "string"
+            },
+            "outline": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "questions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "verifiedFacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "claim": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "claimsToQualify": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "expiresAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "allowance": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "used": {
+              "type": "integer"
+            },
+            "remaining": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "periodStart": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "periodEnd": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "sharedAcrossWorkspace": {
+              "type": "boolean"
+            }
+          }
+        },
+        "confirmationRequired": {
+          "type": "boolean"
+        },
+        "draft": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "bodyFormat": {
+              "type": "string"
+            },
+            "rationale": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "approvalStatus": {
+              "type": "string"
+            },
+            "reviewUrl": {
+              "type": "string"
+            }
+          }
+        },
+        "pollAfterSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId",
+        "status",
+        "siteId",
+        "allowance",
+        "confirmationRequired",
+        "draft",
+        "pollAfterSeconds",
+        "mcpSafetyNote"
+      ]
+    },
+    "generate_article": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "promptId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sourceJobId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "angle": {
+              "type": "string"
+            },
+            "intent": {
+              "type": "string"
+            },
+            "reader": {
+              "type": "string"
+            },
+            "directAnswer": {
+              "type": "string"
+            },
+            "outline": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "questions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "verifiedFacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "claim": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "claimsToQualify": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "expiresAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "allowance": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "used": {
+              "type": "integer"
+            },
+            "remaining": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "periodStart": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "periodEnd": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "sharedAcrossWorkspace": {
+              "type": "boolean"
+            }
+          }
+        },
+        "confirmationRequired": {
+          "type": "boolean"
+        },
+        "draft": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "bodyFormat": {
+              "type": "string"
+            },
+            "rationale": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "approvalStatus": {
+              "type": "string"
+            },
+            "reviewUrl": {
+              "type": "string"
+            }
+          }
+        },
+        "pollAfterSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId",
+        "status",
+        "siteId",
+        "allowance",
+        "confirmationRequired",
+        "draft",
+        "pollAfterSeconds",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_workspace_usage": {
+      "type": "object",
+      "properties": {
+        "plan": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Effective personal-workspace plan, including preserved legacy/custom names.",
+              "examples": [
+                "starter",
+                "growth",
+                "pro",
+                "agency",
+                "custom"
+              ]
+            },
+            "developerApiEnabled": {
+              "type": "boolean"
+            },
+            "siteLimit": {
+              "type": "integer"
+            },
+            "sitesUsed": {
+              "type": "integer"
+            },
+            "renderLimit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        "period": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "end": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "renders": {
+          "type": "integer"
+        },
+        "renderLimit": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "quotaRemaining": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "quotaExceeded": {
+          "type": "boolean"
+        },
+        "requests": {
+          "type": "integer"
+        },
+        "cacheHits": {
+          "type": "integer"
+        },
+        "cacheMisses": {
+          "type": "integer"
+        },
+        "staleHits": {
+          "type": "integer"
+        },
+        "quotaExceededEvents": {
+          "type": "integer"
+        },
+        "failures": {
+          "type": "integer"
+        },
+        "averageDurationMs": {
+          "type": "integer"
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mcpSafetyNote"
+      ]
+    },
+    "get_ai_crawler_visits": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "crawler_visits",
+            "answer_details",
+            "google_search",
+            "search_opportunities",
+            "research",
+            "understanding",
+            "referrals"
+          ]
+        },
+        "readAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "savedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Bounded native saved evidence. Availability, source dates, coverage and limitations remain in data; missing evidence is not a zero result."
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "area",
+        "readAt",
+        "savedOnly",
+        "available",
+        "data",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_ai_answer_details": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "crawler_visits",
+            "answer_details",
+            "google_search",
+            "search_opportunities",
+            "research",
+            "understanding",
+            "referrals"
+          ]
+        },
+        "readAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "savedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Bounded native saved evidence. Availability, source dates, coverage and limitations remain in data; missing evidence is not a zero result."
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "area",
+        "readAt",
+        "savedOnly",
+        "available",
+        "data",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_google_search_performance": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "crawler_visits",
+            "answer_details",
+            "google_search",
+            "search_opportunities",
+            "research",
+            "understanding",
+            "referrals"
+          ]
+        },
+        "readAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "savedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Bounded native saved evidence. Availability, source dates, coverage and limitations remain in data; missing evidence is not a zero result."
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "area",
+        "readAt",
+        "savedOnly",
+        "available",
+        "data",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_google_search_opportunities": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "crawler_visits",
+            "answer_details",
+            "google_search",
+            "search_opportunities",
+            "research",
+            "understanding",
+            "referrals"
+          ]
+        },
+        "readAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "savedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Bounded native saved evidence. Availability, source dates, coverage and limitations remain in data; missing evidence is not a zero result."
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "area",
+        "readAt",
+        "savedOnly",
+        "available",
+        "data",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_saved_question_research": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "crawler_visits",
+            "answer_details",
+            "google_search",
+            "search_opportunities",
+            "research",
+            "understanding",
+            "referrals"
+          ]
+        },
+        "readAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "savedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Bounded native saved evidence. Availability, source dates, coverage and limitations remain in data; missing evidence is not a zero result."
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "area",
+        "readAt",
+        "savedOnly",
+        "available",
+        "data",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_ai_understanding": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "crawler_visits",
+            "answer_details",
+            "google_search",
+            "search_opportunities",
+            "research",
+            "understanding",
+            "referrals"
+          ]
+        },
+        "readAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "savedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Bounded native saved evidence. Availability, source dates, coverage and limitations remain in data; missing evidence is not a zero result."
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "area",
+        "readAt",
+        "savedOnly",
+        "available",
+        "data",
+        "mcpSafetyNote"
+      ]
+    },
+    "get_ai_referrals": {
+      "type": "object",
+      "properties": {
+        "siteId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "area": {
+          "type": "string",
+          "enum": [
+            "crawler_visits",
+            "answer_details",
+            "google_search",
+            "search_opportunities",
+            "research",
+            "understanding",
+            "referrals"
+          ]
+        },
+        "readAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "savedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Bounded native saved evidence. Availability, source dates, coverage and limitations remain in data; missing evidence is not a zero result."
+        },
+        "mcpSafetyNote": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "siteId",
+        "area",
+        "readAt",
+        "savedOnly",
+        "available",
+        "data",
+        "mcpSafetyNote"
+      ]
+    }
+  }
+}

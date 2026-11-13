@@ -21,7 +21,7 @@ const JSON_HEADERS = {
 const DEFAULT_MCP_BASE_URL = 'https://mcp.prerenderbuddy.com';
 const DEFAULT_OAUTH_ISSUER = 'https://api.prerenderbuddy.com';
 const OPENAI_APPS_CHALLENGE_TOKEN = 'eng3f8LytQ0x0BeEp7Ke1JA2we3ipZhDoWRHgC7DK_I';
-const OAUTH_SCOPES = ['sites', 'health', 'activity', 'visibility', 'content', 'content:write'];
+const OAUTH_SCOPES = ['sites', 'health', 'activity', 'visibility', 'content', 'content:write', 'usage', 'search', 'research', 'understanding', 'referrals'];
 const BRAND_ASSETS = new Map([
   ['/favicon.ico', ['image/x-icon', readFileSync(new URL('./brand/favicon.ico', import.meta.url))]],
   ['/favicon.svg', ['image/svg+xml', readFileSync(new URL('./brand/icon.svg', import.meta.url))]],
@@ -152,6 +152,7 @@ export function createHttpListener(options = {}) {
     const token = normalizeConfiguredApiKey(bearerToken(req.headers))
       || normalizeConfiguredApiKey(req.headers['x-prerender-buddy-api-key']);
     if (!ingress.allow('global') || !ingress.allow(clientKey(req))) {
+      res.setHeader('retry-after', String(Math.ceil((options.rateLimitWindowMs || 60_000) / 1000)));
       sendJson(res, 429, {
         error: { code: 'rate_limited', message: 'Too many MCP requests. Retry after the rate-limit window.' },
       });
@@ -170,6 +171,7 @@ export function createHttpListener(options = {}) {
     }
 
     if (!limiter.allow(token ? credentialKey(token) : clientKey(req))) {
+      res.setHeader('retry-after', String(Math.ceil((options.rateLimitWindowMs || 60_000) / 1000)));
       sendJson(res, 429, { error: { code: 'rate_limited', message: 'Too many MCP requests. Retry after the rate-limit window.' } });
       return;
     }
@@ -192,6 +194,7 @@ export function createHttpListener(options = {}) {
       websiteUrl: 'https://mcp.prerenderbuddy.com/go/mcp',
       workspace: {
         apiKey: requestWorkspaceApiKey(req.headers, {}),
+        oauthResource: protectedResourceUrl,
       },
     });
     res.on('close', () => {

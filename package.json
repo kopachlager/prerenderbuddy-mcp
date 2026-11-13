@@ -1,8 +1,8 @@
 {
   "name": "@prerenderbuddy/mcp",
   "mcpName": "io.github.kopachlager/prerenderbuddy-mcp",
-  "version": "0.3.3",
-  "description": "MCP companion to the Prerender Buddy platform for crawler diagnostics and optional workspace evidence.",
+  "version": "0.4.0",
+  "description": "MCP companion for Prerender Buddy saved website, search and AI evidence, public diagnostics and reviewed article drafts.",
   "homepage": "https://github.com/kopachlager/prerenderbuddy-mcp#readme",
   "repository": {
     "type": "git",
@@ -54,10 +54,10 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
-    "@prerenderbuddy/cli": "0.1.4",
+    "@prerenderbuddy/cli": "0.1.5",
     "zod": "^4.6.6"
   },
   "overrides": {
-    "@hono/node-server": "2.0.11"
+    "@hono/node-server": "2.1.8"
   }
 }

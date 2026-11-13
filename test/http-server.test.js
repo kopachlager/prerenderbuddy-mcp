@@ -118,7 +118,7 @@ test('HTTP MCP publishes OAuth protected-resource metadata', async () => {
       resource: 'https://mcp.prerenderbuddy.com/mcp',
       authorization_servers: ['https://api.prerenderbuddy.com'],
       bearer_methods_supported: ['header'],
-      scopes_supported: ['sites', 'health', 'activity', 'visibility', 'content', 'content:write'],
+      scopes_supported: ['sites', 'health', 'activity', 'visibility', 'content', 'content:write', 'usage', 'search', 'research', 'understanding', 'referrals'],
     });
   } finally { server.close(); }
 });
@@ -144,6 +144,7 @@ test('HTTP MCP rate-limits repeated requests', async () => {
     const second = await fetch(`${origin}/mcp`, { method: 'POST' });
     assert.notEqual(first.status, 429);
     assert.equal(second.status, 429);
+    assert.equal(second.headers.get('retry-after'), '60');
   } finally {
     server.close();
   }

@@ -25,13 +25,27 @@ function safeErrorMessage(value, fallback) {
   return message.slice(0, 500);
 }
 
+function safeScopes(value) {
+  return Array.isArray(value) ? [...new Set(value.filter(scope => typeof scope === 'string'
+    && /^[a-z][a-z0-9:_-]{0,48}$/.test(scope) && !/pb_(?:live|test)_|bearer|authorization/i.test(scope)))].slice(0, 20) : [];
+}
+
+function retryDelay(value) {
+  if (!value) return null;
+  const seconds = /^\d+$/.test(value) ? Number(value) : Math.ceil((Date.parse(value) - Date.now()) / 1000);
+  return Number.isFinite(seconds) && seconds >= 0 && seconds <= 86400 ? seconds : null;
+}
+
 export class WorkspaceApiError extends Error {
-  constructor(message, { status = null, code = 'workspace_request_failed', requestId = null } = {}) {
+  constructor(message, { status = null, code = 'workspace_request_failed', requestId = null, requiredScopes = [], retryAfterSeconds = null } = {}) {
     super(message);
     this.name = 'WorkspaceApiError';
     this.status = status;
-    this.code = code;
-    this.requestId = requestId;
+    this.code = typeof code === 'string' && /^[a-z][a-z0-9_]{0,79}$/.test(code) ? code : 'workspace_request_failed';
+    this.requestId = typeof requestId === 'string' && /^[a-zA-Z0-9:_-]{1,160}$/.test(requestId)
+      && !/pb_(?:live|test)_|bearer|authorization/i.test(requestId) ? requestId : null;
+    this.requiredScopes = safeScopes(requiredScopes);
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
@@ -125,6 +139,8 @@ export function createWorkspaceApiClient(options = {}) {
             status: response.status,
             code: data?.error?.code || 'workspace_request_failed',
             requestId: data?.requestId || null,
+            requiredScopes: data?.error?.details?.requiredScopes,
+            retryAfterSeconds: retryDelay(response.headers.get('retry-after')),
           },
         );
       }
