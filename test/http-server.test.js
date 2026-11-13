@@ -132,6 +132,7 @@ test('HTTP MCP rate-limits repeated requests', async () => {
     const second = await fetch(`${origin}/mcp`, { method: 'POST' });
     assert.notEqual(first.status, 429);
     assert.equal(second.status, 429);
+    assert.equal(second.headers.get('retry-after'), '60');
   } finally {
     server.close();
   }

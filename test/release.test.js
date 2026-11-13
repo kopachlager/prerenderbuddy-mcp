@@ -58,7 +58,7 @@ test('package entry points exist and the CLI dependency is explicit', async () =
   await access(exportPath);
   const binaryStat = await stat(binaryPath);
   assert.ok(binaryStat.mode & 0o111, 'package binary must be executable');
-  assert.equal(packageJson.dependencies['@prerenderbuddy/cli'], '0.1.4');
+  assert.equal(packageJson.dependencies['@prerenderbuddy/cli'], '0.1.5');
 });
 
 test('CLI dependency treats matching empty text volumes as equal', () => {

@@ -35,6 +35,8 @@ function errorResult(error) {
       message: known ? error.message : 'Prerender Buddy workspace request failed.',
       ...(known && error.status ? { status: error.status } : {}),
       ...(known && error.requestId ? { requestId: error.requestId } : {}),
+      ...(known && error.requiredScopes?.length ? { requiredScopes: error.requiredScopes } : {}),
+      ...(known && error.retryAfterSeconds !== null ? { retryAfterSeconds: error.retryAfterSeconds } : {}),
     },
     mcpSafetyNote: ACCOUNT_EVIDENCE_NOTE,
   };
